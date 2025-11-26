@@ -177,10 +177,7 @@ export default function ChronicleLayout() {
       <div className="flex flex-col h-screen bg-background">
         <Header />
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar side="right" variant="sidebar" collapsible="icon">
-            <SidebarWidgets state={state} dispatch={dispatch} actions={actions} />
-          </Sidebar>
-          <SidebarInset className="p-4 md:p-6 lg:p-8">
+          <SidebarInset className="p-4 md:p-6 lg:p-8 flex-1">
             <MainEditor
               ref={editorRef}
               content={state.editorContent}
@@ -189,13 +186,21 @@ export default function ChronicleLayout() {
             />
           </SidebarInset>
         </div>
+        <div className="fixed bottom-0 left-0 right-0 md:hidden">
+             <SidebarWidgets
+                state={state}
+                dispatch={dispatch}
+                actions={actions}
+              />
+        </div>
+        <div className="hidden md:block">
+            <SidebarWidgets
+                state={state}
+                dispatch={dispatch}
+                actions={actions}
+              />
+        </div>
       </div>
-       <SidebarWidgets
-        isSheet={true}
-        state={state}
-        dispatch={dispatch}
-        actions={actions}
-      />
     </SidebarProvider>
   );
 }

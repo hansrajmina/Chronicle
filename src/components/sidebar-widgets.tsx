@@ -3,29 +3,22 @@
 import React from 'react'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import {
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-} from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck } from 'lucide-react'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
 const WidgetCard = ({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => (
-  <Card className="border-2 border-foreground/10 shadow-lg overflow-hidden">
-    <CardHeader className="p-4 bg-muted/50">
-      <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+  <Card className="border-2 border-sidebar-border bg-sidebar-accent/20 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-primary/50">
+    <CardHeader className="p-4 bg-sidebar-accent/30">
+      <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-sidebar-foreground/80">
         {icon}
         {title}
       </CardTitle>
@@ -43,7 +36,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
   const handleExportPdf = () => {
     const editor = document.getElementById('editor')
     if (editor) {
-      html2canvas(editor, { scale: 2 }).then((canvas) => {
+      html2canvas(editor, { scale: 2, backgroundColor: '#111827' }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png')
         const pdf = new jsPDF('p', 'mm', 'a4')
         const pdfWidth = pdf.internal.pageSize.getWidth()
@@ -54,13 +47,8 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
     }
   }
 
-  return (
-    <>
-      <SidebarHeader>
-        <h2 className="text-lg font-bold">Chronicle Tools</h2>
-      </SidebarHeader>
-      <ScrollArea className="flex-1">
-        <SidebarContent className="p-2 space-y-4">
+  const renderContent = () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
           <WidgetCard title="Actions" icon={<Sparkles className="size-4" />}>
             <div className="space-y-2">
                <Button onClick={actions.onContinueWriting} disabled={state.aiLoading} className="w-full">
@@ -81,7 +69,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                 <p className="text-xs text-muted-foreground">Total XP</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{state.gamification.streak} 🔥</p>
+                <p className="text-2xl font-bold">{state.gamification.streak}</p>
                 <p className="text-xs text-muted-foreground">Day Streak</p>
               </div>
             </div>
@@ -94,7 +82,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                     type="number" 
                     value={state.wordGoal}
                     onChange={(e) => dispatch({ type: 'SET_WORD_GOAL', payload: Number(e.target.value) })}
-                    className="w-24"
+                    className="w-24 bg-sidebar-background"
                     />
                     <span className="text-sm text-muted-foreground">words</span>
                 </div>
@@ -103,9 +91,9 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
             </div>
           </WidgetCard>
           
-          <Card className="border-2 border-foreground/10 shadow-lg">
+          <Card className="border-2 border-sidebar-border bg-sidebar-accent/20 shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-primary/50">
              <Tabs defaultValue="humanizer" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-3 bg-sidebar-accent/30">
                   <TabsTrigger value="humanizer"><Feather/></TabsTrigger>
                   <TabsTrigger value="language"><Languages/></TabsTrigger>
                   <TabsTrigger value="references"><BookCheck/></TabsTrigger>
@@ -123,7 +111,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                     <p className="text-sm text-muted-foreground mb-4">Translate selected text to an Indian language.</p>
                      <div className="space-y-4">
                         <Select value={language} onValueChange={(v: IndianLanguage) => setLanguage(v)}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-sidebar-background">
                                 <SelectValue placeholder="Select Language" />
                             </SelectTrigger>
                             <SelectContent>
@@ -151,9 +139,9 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                 </TabsContent>
             </Tabs>
             {(state.aiResult || state.references.length > 0) && (
-                <CardContent className="p-4 border-t">
+                <CardContent className="p-4 border-t border-sidebar-border">
                   <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">AI Result</h4>
-                  <ScrollArea className="h-40 w-full rounded-md border p-2 bg-muted/30">
+                  <ScrollArea className="h-40 w-full rounded-md border border-sidebar-border p-2 bg-sidebar-background/50">
                     {state.aiResult && <p className="text-sm">{state.aiResult}</p>}
                     {state.references.length > 0 && (
                         <ul className="space-y-2 text-sm list-disc list-inside">
@@ -164,11 +152,32 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                 </CardContent>
             )}
           </Card>
-        </SidebarContent>
-      </ScrollArea>
-      <SidebarFooter>
-        <p className="text-xs text-center text-muted-foreground p-4">Built with Gemini 2.5 Flash</p>
-      </SidebarFooter>
+      </div>
+  );
+
+  return (
+    <>
+      <div className="md:hidden">
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="outline" className="fixed bottom-4 right-4 z-50 rounded-full h-12 w-12 p-0">
+                    <Sparkles />
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="bg-sidebar text-sidebar-foreground border-sidebar-border max-h-[80vh]">
+                <SheetHeader>
+                    <SheetTitle>Chronicle Tools</SheetTitle>
+                    <SheetDescription>AI-powered writing assistance.</SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="h-full">
+                    {renderContent()}
+                </ScrollArea>
+            </SheetContent>
+        </Sheet>
+      </div>
+      <div className="hidden md:block fixed bottom-0 left-0 right-0 z-40 bg-sidebar border-t border-sidebar-border">
+        {renderContent()}
+      </div>
     </>
   )
 }
