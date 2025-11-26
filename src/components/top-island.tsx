@@ -181,7 +181,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
          <div className="flex items-center gap-1">
-            <TabButton value="back" disabled={!isEditorEnlarged} onClick={() => setIsEditorEnlarged(false)}><ChevronsLeft /></TabButton>
              <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
                 <Feather className="w-5 h-5 text-primary" />
                 CHRONICLE AI
