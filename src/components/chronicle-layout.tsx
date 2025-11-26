@@ -227,6 +227,10 @@ export default function ChronicleLayout() {
             >
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[10px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+                <Button onClick={onContinueWriting} disabled={state.aiLoading || state.wordCount === 0} className="mt-6 transition-transform transform hover:scale-105">
+                    {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
+                    Continue Writing
+                </Button>
             </section>
 
             <section 
