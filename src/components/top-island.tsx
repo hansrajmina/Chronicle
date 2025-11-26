@@ -1,21 +1,25 @@
-"use client"
+'use client';
 
-import React from 'react'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Progress } from '@/components/ui/progress'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, Type, PencilRuler, History } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import React from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { BookCheck, Brush, Download, Feather, History, Languages, Loader2, PencilRuler, Type } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { type WritingStyle } from '@/ai/flows/change-writing-style';
+import { z } from 'zod';
+
+const WritingStyleSchema = z.enum(['Formal', 'Casual', 'Modern']);
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
-export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab, isEditorEnlarged, setIsEditorEnlarged }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void, isEditorEnlarged: boolean, setIsEditorEnlarged: (isEnlarged: boolean) => void }) {
+export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
   const [rewriteLength, setRewriteLength] = React.useState<number>(100);
+  const [writingStyle, setWritingStyle] = React.useState<WritingStyle>('Formal');
   
   const handleExportPdf = () => {
     const editorNode = document.getElementById('editor');
@@ -141,6 +145,27 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </Button>
             </div>
         ),
+        style: (
+            <>
+              <p className="text-sm text-muted-foreground mb-4 text-center">Change the writing style of the selected text.</p>
+              <div className="flex gap-4 justify-center">
+                <Select value={writingStyle} onValueChange={(v: WritingStyle) => setWritingStyle(v)}>
+                  <SelectTrigger className="bg-secondary w-48">
+                    <SelectValue placeholder="Select Style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {WritingStyleSchema.options.map(style => (
+                      <SelectItem key={style} value={style}>{style}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={() => { actions.onChangeStyle(state.selectedText, writingStyle); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
+                  {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
+                  Change Style
+                </Button>
+              </div>
+            </>
+        ),
         'view-text': (
             (state.aiResult || state.references.length > 0) ? (
                 <div>
@@ -178,6 +203,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         </div>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
+            <TabButton value="style"><Brush/></TabButton>
             <TabButton value="humanizer"><Feather/></TabButton>
             <TabButton value="language"><Languages/></TabButton>
             <TabButton value="rewrite"><PencilRuler/></TabButton>

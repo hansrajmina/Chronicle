@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import MainEditor from '@/components/main-editor';
@@ -11,6 +11,7 @@ import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
 import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-language';
 import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
+import { changeWritingStyle, type WritingStyle } from '@/ai/flows/change-writing-style';
 import { cn } from '@/lib/utils';
 
 declare global {
@@ -66,10 +67,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       const readingTime = Math.ceil(newWordCount / 200);
       return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false };
     case 'APPEND_EDITOR_CONTENT':
-      const appendedContent = state.editorContent + action.payload;
-      const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-      const appendedReadingTime = Math.ceil(appendedWordCount / 200);
-      return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true };
+        const lastChar = state.editorContent.slice(-1);
+        const separator = (lastChar === ' ' || lastChar === '.' || lastChar === ',') ? '' : ' ';
+        const appendedContent = state.editorContent + separator + action.payload;
+        const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+        const appendedReadingTime = Math.ceil(appendedWordCount / 200);
+        return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -130,9 +133,7 @@ export default function ChronicleLayout() {
       const result = await apiFn(payload);
       if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
       if (result.expandedText) {
-          const lastChar = payload.text.slice(-1);
-          const separator = (lastChar === ' ' || lastChar === '.' || lastChar === ',') ? '' : ' ';
-          dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: `${separator}${result.expandedText}` });
+          dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
           if (editorRef.current) {
             editorRef.current.focus();
             const range = document.createRange();
@@ -168,6 +169,7 @@ export default function ChronicleLayout() {
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
+  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
   const onRephrase = () => {
@@ -176,7 +178,7 @@ export default function ChronicleLayout() {
     dispatch({ type: 'SET_IS_TEXT_EXPANDED', payload: false });
   };
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont };
+  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont, onChangeStyle };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
