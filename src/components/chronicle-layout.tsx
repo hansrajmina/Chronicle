@@ -4,7 +4,7 @@ import React, { useState, useReducer, useCallback, useEffect, useRef } from 'rea
 import MainEditor from '@/components/main-editor';
 import TopIsland from '@/components/top-island';
 import { Button } from '@/components/ui/button';
-import { Loader2, Sparkles } from 'lucide-react';
+import { ChevronsLeft, Loader2, Sparkles } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { humanizeText } from '@/ai/flows/humanize-text';
 import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
@@ -195,12 +195,14 @@ export default function ChronicleLayout() {
         actions={actions}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        isEditorEnlarged={isEditorEnlarged}
+        setIsEditorEnlarged={setIsEditorEnlarged}
       />
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24">
         <div className={cn("w-full flex flex-col md:flex-row items-center justify-center gap-8 transition-all duration-500", isEditorEnlarged ? 'md:items-start' : 'md:items-center')}>
             <section 
-                className={cn("text-center md:text-left transition-all duration-500", isEditorEnlarged ? 'md:w-1/4 opacity-0 md:opacity-100' : 'md:w-1/3')}
+                className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
             >
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">The Future of Writing is Here</h1>
@@ -253,5 +255,7 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
 
     

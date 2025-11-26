@@ -8,12 +8,12 @@ import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, Download, Feather, Languages, Loader2, Target, BookCheck, FileText, Type, PencilRuler, X } from 'lucide-react'
+import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, FileText, Type, PencilRuler, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
-export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void }) {
+export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab, isEditorEnlarged, setIsEditorEnlarged }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void, isEditorEnlarged: boolean, setIsEditorEnlarged: (isEnlarged: boolean) => void }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
   const [rewriteLength, setRewriteLength] = React.useState<number>(100);
   
@@ -31,11 +31,12 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     }
   }
 
-  const TabButton = ({ value, children }: { value: string, children: React.ReactNode }) => (
+  const TabButton = ({ value, children, disabled }: { value: string, children: React.ReactNode, disabled?: boolean }) => (
     <button
-      onClick={() => setActiveTab(activeTab === value ? null : value)}
+      onClick={() => !disabled && setActiveTab(activeTab === value ? null : value)}
+      disabled={disabled}
       className={cn(
-        "p-2 rounded-md transition-all duration-200 transform hover:bg-accent hover:scale-110 font-glow text-primary",
+        "p-2 rounded-md transition-all duration-200 transform hover:bg-accent hover:scale-110 font-glow text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent",
         activeTab === value ? "bg-accent" : ""
       )}
       aria-label={value}
@@ -177,12 +178,15 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-         <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2 pl-2">
-            <Feather className="w-5 h-5 text-primary" />
-            Chronicle AI
-        </h1>
+         <div className="flex items-center gap-2">
+            <TabButton value="back" disabled={!isEditorEnlarged}><ChevronsLeft onClick={() => setIsEditorEnlarged(false)} /></TabButton>
+             <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2 pl-2">
+                <Feather className="w-5 h-5 text-primary" />
+                Chronicle AI
+            </h1>
+         </div>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
             <TabButton value="gamification"><BarChart/></TabButton>
@@ -192,6 +196,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="rewrite"><PencilRuler/></TabButton>
             <TabButton value="references"><BookCheck/></TabButton>
             <TabButton value="view-text"><FileText/></TabButton>
+            <TabButton value="download"><Download onClick={handleExportPdf} /></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
@@ -200,3 +205,5 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
+
+    
