@@ -19,7 +19,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   
   const handleExportPdf = () => {
     const editor = document.getElementById('editor');
-    const editorContent = document.getElementById('editor-content-wrapper');
+    const editorContent = document.getElementById('editor-content');
 
     if (editor && editorContent) {
       // Temporarily remove the placeholder text if it exists
@@ -28,21 +28,15 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         (placeholder as HTMLElement).style.display = 'none';
       }
       
-      html2canvas(editorContent, {
+      html2canvas(editor, {
         scale: 2,
         useCORS: true,
         backgroundColor: null, 
         onclone: (document, element) => {
           element.style.minHeight = 'initial';
-          const parentEditor = element.closest('#editor');
-          if(parentEditor) {
-            // We need to copy the background from the parent to the cloned element
-            const styles = window.getComputedStyle(parentEditor);
-            element.style.background = styles.background;
-            element.style.backdropFilter = styles.backdropFilter;
-            element.style.border = styles.border;
-            element.style.borderRadius = styles.borderRadius;
-            element.style.boxShadow = styles.boxShadow;
+          const content = element.querySelector('#editor-content') as HTMLElement;
+          if (content) {
+            content.style.minHeight = 'initial';
           }
         }
       }).then((canvas) => {
@@ -193,7 +187,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-        <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
+        <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap mr-2">
             <Feather className="w-4 h-4 text-primary" />
             CHRONICLE AI
         </h1>
