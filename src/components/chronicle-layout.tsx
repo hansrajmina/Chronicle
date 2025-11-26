@@ -138,8 +138,8 @@ export default function ChronicleLayout() {
     try {
       const result = await apiFn(payload);
       
-      if (isRephrase && result.humanizedText) {
-        dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.humanizedText });
+      if (isRephrase && result.rewrittenText) {
+        dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
         toast({ title: "Success", description: successMsg });
       } else {
         if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
@@ -156,7 +156,9 @@ export default function ChronicleLayout() {
             }
         }
         if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
-        if (result.rewrittenText) dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+        if (result.rewrittenText) {
+          dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+        }
         if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
 
         if (!result.expandedText) {
@@ -182,11 +184,17 @@ export default function ChronicleLayout() {
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
-  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
+  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.', style === 'Formal');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
   const onRephrase = () => {
-    handleApiCall(humanizeText, { text: state.editorContent }, 'Text rephrased successfully.', true);
+    handleApiCall(changeWritingStyle, { text: state.editorContent, style: 'Casual' }, 'Text rephrased successfully.', true);
+  };
+
+  const handleEditorClick = () => {
+    if (activeTabState !== null) {
+      setActiveTabState(null);
+    }
   };
 
   const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont, onChangeStyle };
@@ -219,6 +227,7 @@ export default function ChronicleLayout() {
                 className="w-full transition-all duration-500 md:w-1/2"
                 data-aos="fade-left" 
                 data-aos-delay="200"
+                onClick={handleEditorClick}
             >
                 <div className={cn(
                   "w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 hover:shadow-primary/20",
