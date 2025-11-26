@@ -18,10 +18,12 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   const [rewriteLength, setRewriteLength] = React.useState<number>(100);
   
   const handleExportPdf = () => {
-    const editor = document.getElementById('editor')
-    if (editor) {
+    const editor = document.getElementById('editor');
+    const editorContent = document.getElementById('editor-content');
+
+    if (editor && editorContent) {
       // Temporarily remove the placeholder text if it exists
-      const placeholder = editor.querySelector('.pointer-events-none');
+      const placeholder = editorContent.querySelector('.pointer-events-none');
       if (placeholder) {
         (placeholder as HTMLElement).style.display = 'none';
       }
@@ -29,13 +31,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
       html2canvas(editor, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null, // Make background transparent
-        onclone: (document) => {
-          const clonedEditor = document.getElementById('editor');
-          if(clonedEditor) {
-            clonedEditor.style.backgroundColor = 'hsl(var(--background))';
-          }
-        }
+        backgroundColor: null, 
       }).then((canvas) => {
         // Restore placeholder if it was hidden
         if (placeholder) {
@@ -184,12 +180,10 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-         <div className="flex items-center gap-1">
-             <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
-                <Feather className="w-4 h-4 text-primary" />
-                CHRONICLE AI
-            </h1>
-         </div>
+        <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
+            <Feather className="w-4 h-4 text-primary" />
+            CHRONICLE AI
+        </h1>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
             <TabButton value="gamification"><BarChart/></TabButton>
