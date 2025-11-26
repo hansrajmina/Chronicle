@@ -38,6 +38,7 @@ type AppState = {
   aiResult: string;
   references: string[];
   font: 'inter' | 'lora' | 'mono';
+  isTextExpanded: boolean;
 };
 
 type AppAction =
@@ -49,7 +50,8 @@ type AppAction =
   | { type: 'SET_AI_RESULT'; payload: string }
   | { type: 'SET_REFERENCES'; payload: string[] }
   | { type: 'APPEND_EDITOR_CONTENT'; payload: string }
-  | { type: 'SET_FONT'; payload: 'inter' | 'lora' | 'mono' };
+  | { type: 'SET_FONT'; payload: 'inter' | 'lora' | 'mono' }
+  | { type: 'SET_IS_TEXT_EXPANDED'; payload: boolean };
 
 const initialState: AppState = {
   editorContent: '',
@@ -62,6 +64,7 @@ const initialState: AppState = {
   aiResult: '',
   references: [],
   font: 'inter',
+  isTextExpanded: false,
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -70,12 +73,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       const content = action.payload;
       const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
       const readingTime = Math.ceil(newWordCount / 200);
-      return { ...state, editorContent: content, wordCount: newWordCount, readingTime };
+      return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false };
     case 'APPEND_EDITOR_CONTENT':
       const appendedContent = state.editorContent + action.payload;
       const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
       const appendedReadingTime = Math.ceil(appendedWordCount / 200);
-      return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime };
+      return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -86,22 +89,31 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_AI_LOADING':
       return { ...state, aiLoading: action.payload };
     case 'SET_AI_RESULT':
+      setActiveTab('view-text');
       return { ...state, aiResult: action.payload, references: [] };
     case 'SET_REFERENCES':
+      setActiveTab('view-text');
       return { ...state, references: action.payload, aiResult: '' };
     case 'SET_FONT':
       return { ...state, font: action.payload };
+    case 'SET_IS_TEXT_EXPANDED':
+      return { ...state, isTextExpanded: action.payload };
     default:
       return state;
   }
 };
 
+let setActiveTab: (tab: string | null) => void;
+
 export default function ChronicleLayout() {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [activeTabState, setActiveTabState] = useState<string | null>(null);
   const [isEditorEnlarged, setIsEditorEnlarged] = useState(false);
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
+
+  setActiveTab = setActiveTabState;
+
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.AOS) {
@@ -182,7 +194,7 @@ export default function ChronicleLayout() {
       if (result.rewrittenText) dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
       if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
       if (!result.expandedText) {
-          setActiveTab('view-text');
+          setActiveTabState('view-text');
       } else {
         toast({ title: "Success", description: successMsg });
       }
@@ -205,6 +217,12 @@ export default function ChronicleLayout() {
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
+  const onRephrase = () => {
+    // We can use the humanize function to rephrase the whole content.
+    handleApiCall(humanizeText, { text: state.editorContent }, 'Text rephrased successfully.');
+    dispatch({ type: 'SET_IS_TEXT_EXPANDED', payload: false });
+  };
+
   const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont };
 
   return (
@@ -213,28 +231,34 @@ export default function ChronicleLayout() {
         state={state}
         dispatch={dispatch}
         actions={actions}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        activeTab={activeTabState}
+        setActiveTab={setActiveTabState}
         isEditorEnlarged={isEditorEnlarged}
         setIsEditorEnlarged={setIsEditorEnlarged}
       />
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
-        <div className="w-full flex flex-col md:flex-row items-center justify-center gap-8">
+        <div className="w-full flex items-center justify-center gap-8 md:flex-row flex-col">
             <section 
-                className="text-center md:text-left md:w-1/3"
+                className={cn(
+                  "text-center md:text-left transition-opacity duration-500",
+                  isEditorEnlarged ? "md:w-0 opacity-0" : "md:w-1/3 opacity-100"
+                )}
                 data-aos="fade-right"
             >
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[8px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
-                <Button onClick={onContinueWriting} disabled={state.aiLoading || state.wordCount === 0} className="mt-6 px-12 transition-transform transform hover:scale-105">
+                <Button onClick={state.isTextExpanded ? onRephrase : onContinueWriting} disabled={state.aiLoading || state.wordCount === 0} className="mt-6 px-12 transition-transform transform hover:scale-105">
                     {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
-                    Continue Writing
+                    {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
                 </Button>
             </section>
 
             <section 
-                className="w-full md:w-1/2"
+                className={cn(
+                  "w-full transition-all duration-500",
+                  isEditorEnlarged ? "md:w-full" : "md:w-1/2"
+                )}
                 data-aos="fade-left" 
                 data-aos-delay="200"
             >
@@ -259,3 +283,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    

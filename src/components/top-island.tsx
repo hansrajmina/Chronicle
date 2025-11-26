@@ -95,7 +95,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         humanizer: (
             <>
                 <p className="text-sm text-muted-foreground mb-4 text-center">Select text in the editor to make it sound more natural.</p>
-                <Button onClick={() => actions.onHumanize(state.selectedText)} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
+                <Button onClick={() => { actions.onHumanize(state.selectedText); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                 Humanize Text
             </Button>
@@ -118,7 +118,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
                         <SelectItem value="Urdu">Urdu</SelectItem>
                     </SelectContent>
                 </Select>
-                <Button onClick={() => actions.onTranslate(state.selectedText, language)} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
+                <Button onClick={() => { actions.onTranslate(state.selectedText, language); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
                     {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                     Translate Text
                 </Button>
@@ -135,7 +135,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
                 onChange={(e) => setRewriteLength(Number(e.target.value))}
                 className="w-24 bg-secondary"
                 />
-                <Button onClick={() => actions.onRewrite(state.selectedText, rewriteLength)} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
+                <Button onClick={() => { actions.onRewrite(state.selectedText, rewriteLength); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
                     {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                     Rewrite Text
                 </Button>
@@ -145,7 +145,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         references: (
             <>
                 <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
-                <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.wordCount === 0 || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
+                <Button onClick={() => { actions.onFetchReferences(state.editorContent); setActiveTab(null); }} disabled={state.wordCount === 0 || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                 Find References
             </Button>
@@ -178,18 +178,17 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
          <div className="flex items-center gap-1">
-             <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
-                <Feather className="w-5 h-5 text-primary" />
+             <h1 className="text-md font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
+                <Feather className="w-4 h-4 text-primary" />
                 CHRONICLE AI
             </h1>
          </div>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
             <TabButton value="gamification"><BarChart/></TabButton>
-            <TabButton value="word-goal"><Target/></TabButton>
             <TabButton value="humanizer"><Feather/></TabButton>
             <TabButton value="language"><Languages/></TabButton>
             <TabButton value="rewrite"><PencilRuler/></TabButton>
@@ -204,3 +203,5 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
+
+    
