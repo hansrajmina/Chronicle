@@ -10,25 +10,19 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText } from 'lucide-react'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet'
+import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText, Clock, FileBadge } from 'lucide-react'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
-const WidgetCard = ({ title, icon, children, cardClassName }: { title: string, icon: React.ReactNode, children: React.ReactNode, cardClassName?: string }) => (
-  <Card className={`border-2 border-sidebar-border bg-sidebar-accent/20 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-primary/50 ${cardClassName}`}>
-    <CardHeader className="p-4 bg-sidebar-accent/30">
-      <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-sidebar-foreground/80">
-        {icon}
-        {title}
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="p-4">
-      {children}
-    </CardContent>
-  </Card>
-);
-
+const StatCard = ({ title, value, icon }: { title: string, value: string | number, icon: React.ReactNode }) => (
+    <div className="flex items-center gap-2 text-sm">
+      {icon}
+      <div>
+        <p className="font-bold">{value}</p>
+        <p className="text-xs text-muted-foreground">{title}</p>
+      </div>
+    </div>
+  );
 
 export default function SidebarWidgets({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
@@ -36,7 +30,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
   const handleExportPdf = () => {
     const editor = document.getElementById('editor')
     if (editor) {
-      html2canvas(editor, { scale: 2, backgroundColor: '#030014' }).then((canvas) => {
+      html2canvas(editor, { scale: 2, backgroundColor: 'hsl(var(--background))' }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png')
         const pdf = new jsPDF('p', 'mm', 'a4')
         const pdfWidth = pdf.internal.pageSize.getWidth()
@@ -49,17 +43,19 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
 
   const renderContent = () => (
       <Tabs defaultValue="actions" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-sidebar-accent/30 h-12 px-1">
-          <TabsTrigger value="actions" aria-label="Actions"><Sparkles/></TabsTrigger>
-          <TabsTrigger value="gamification" aria-label="Gamification"><BarChart/></TabsTrigger>
-          <TabsTrigger value="word-goal" aria-label="Word Goal"><Target/></TabsTrigger>
-          <TabsTrigger value="humanizer" aria-label="Humanizer"><Feather/></TabsTrigger>
-          <TabsTrigger value="language" aria-label="Language"><Languages/></TabsTrigger>
-          <TabsTrigger value="references" aria-label="References"><BookCheck/></TabsTrigger>
-          <TabsTrigger value="view-text" aria-label="View Text"><FileText/></TabsTrigger>
-        </TabsList>
+        <div className="flex justify-center">
+            <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm">
+                <TabsTrigger value="actions" aria-label="Actions" className="transition-all transform hover:scale-110"><Sparkles/></TabsTrigger>
+                <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
+                <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
+                <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
+                <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
+                <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
+                <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
+            </TabsList>
+        </div>
 
-        <div className="p-4">
+        <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border">
             <TabsContent value="actions">
                 <div className="grid grid-cols-2 gap-4">
                     <Button onClick={actions.onContinueWriting} disabled={state.aiLoading} className="w-full">
@@ -93,7 +89,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                         type="number" 
                         value={state.wordGoal}
                         onChange={(e) => dispatch({ type: 'SET_WORD_GOAL', payload: Number(e.target.value) })}
-                        className="w-24 bg-sidebar-background"
+                        className="w-24 bg-background"
                         />
                         <span className="text-sm text-muted-foreground">words</span>
                     </div>
@@ -116,7 +112,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                 <p className="text-sm text-muted-foreground mb-4 text-center">Translate selected text to an Indian language.</p>
                     <div className="flex gap-4 justify-center">
                     <Select value={language} onValueChange={(v: IndianLanguage) => setLanguage(v)}>
-                        <SelectTrigger className="bg-sidebar-background w-48">
+                        <SelectTrigger className="bg-background w-48">
                             <SelectValue placeholder="Select Language" />
                         </SelectTrigger>
                         <SelectContent>
@@ -147,7 +143,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                 {(state.aiResult || state.references.length > 0) ? (
                     <div>
                         <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2 text-center">AI Result</h4>
-                        <ScrollArea className="h-24 w-full rounded-md border border-sidebar-border p-2 bg-sidebar-background/50">
+                        <ScrollArea className="h-24 w-full rounded-md border p-2 bg-background/50">
                             {state.aiResult && <p className="text-sm">{state.aiResult}</p>}
                             {state.references.length > 0 && (
                                 <ul className="space-y-2 text-sm list-disc list-inside">
@@ -165,28 +161,18 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
   );
 
   return (
-    <>
-      <div className="md:hidden">
-        <Sheet>
-            <SheetTrigger asChild>
-                <Button variant="outline" className="fixed bottom-4 right-4 z-50 rounded-full h-12 w-12 p-0 bg-primary/80 border-primary text-primary-foreground hover:bg-primary">
-                    <Sparkles />
-                </Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="bg-sidebar text-sidebar-foreground border-sidebar-border max-h-[80vh]">
-                <SheetHeader>
-                    <SheetTitle>Chronicle Tools</SheetTitle>
-                    <SheetDescription>AI-powered writing assistance.</SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-full">
-                    <div className="p-4">{renderContent()}</div>
-                </ScrollArea>
-            </SheetContent>
-        </Sheet>
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+      <div className="bg-card/80 backdrop-blur-sm rounded-lg border border-border p-2 flex items-center justify-between shadow-lg mb-2">
+         <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
+            <Feather className="w-5 h-5 text-primary" />
+            Chronicle AI
+        </h1>
+        <div className="flex items-center gap-6">
+            <StatCard title="Word Count" value={state.wordCount} icon={<FileBadge className="text-primary" />} />
+            <StatCard title="Reading Time" value={`${state.readingTime} min`} icon={<Clock className="text-primary" />} />
+        </div>
       </div>
-      <div className="hidden md:block fixed bottom-0 left-0 right-0 z-40 bg-sidebar border-t-2 border-primary/20 shadow-[0_-4px_15px_-5px_rgba(0,0,0,0.2)]">
-        {renderContent()}
-      </div>
-    </>
+      {renderContent()}
+    </div>
   )
 }

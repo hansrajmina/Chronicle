@@ -33,10 +33,9 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
       onMouseUp={onSelectionChange}
       onKeyUp={onSelectionChange}
       className={cn(
-        'w-full h-full max-w-4xl mx-auto p-8 bg-card rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-primary overflow-y-auto prose dark:prose-invert lg:prose-xl',
-        'neobrutalist-editor'
+        'w-full h-full max-w-4xl mx-auto p-8 rounded-lg focus:outline-none overflow-y-auto prose dark:prose-invert lg:prose-xl'
       )}
-      style={{ minHeight: 'calc(100vh - 15rem)', paddingBottom: '2rem' }}
+      style={{ minHeight: 'calc(100vh - 10rem)' }}
     >
     </div>
   );

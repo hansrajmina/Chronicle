@@ -1,12 +1,6 @@
 "use client";
 
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import Header from '@/components/header';
 import MainEditor from '@/components/main-editor';
 import SidebarWidgets from '@/components/sidebar-widgets';
 
@@ -28,6 +22,7 @@ type GamificationState = {
 type AppState = {
   editorContent: string;
   wordCount: number;
+  readingTime: number;
   selectedText: string;
   gamification: GamificationState;
   wordGoal: number;
@@ -50,6 +45,7 @@ type AppAction =
 const initialState: AppState = {
   editorContent: '<p>Start writing your masterpiece...</p>',
   wordCount: 4,
+  readingTime: 0,
   selectedText: '',
   gamification: { xp: 0, streak: 0, lastWriteDate: null },
   wordGoal: 500,
@@ -61,12 +57,15 @@ const initialState: AppState = {
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_EDITOR_CONTENT':
-      const newWordCount = action.payload.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-      return { ...state, editorContent: action.payload, wordCount: newWordCount };
+      const content = action.payload;
+      const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+      const readingTime = Math.ceil(newWordCount / 200);
+      return { ...state, editorContent: content, wordCount: newWordCount, readingTime };
     case 'APPEND_EDITOR_CONTENT':
         const appendedContent = state.editorContent + action.payload;
         const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-        return { ...state, editorContent: appendedContent, wordCount: appendedWordCount };
+        const appendedReadingTime = Math.ceil(appendedWordCount / 200);
+        return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -173,25 +172,20 @@ export default function ChronicleLayout() {
   const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences };
 
   return (
-    <SidebarProvider>
       <div className="flex flex-col h-screen bg-background">
-        <Header />
-        <div className="flex flex-1 overflow-hidden">
-          <SidebarInset className="p-4 md:p-6 lg:p-8 flex-1">
+        <SidebarWidgets
+          state={state}
+          dispatch={dispatch}
+          actions={actions}
+        />
+        <div className="flex flex-1 overflow-hidden pt-24">
             <MainEditor
               ref={editorRef}
               content={state.editorContent}
               onContentChange={handleContentChange}
               onSelectionChange={handleSelectionChange}
             />
-          </SidebarInset>
         </div>
-        <SidebarWidgets
-          state={state}
-          dispatch={dispatch}
-          actions={actions}
-        />
       </div>
-    </SidebarProvider>
   );
 }

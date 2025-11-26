@@ -6,7 +6,7 @@ import { Feather } from 'lucide-react'
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between p-2 border-b shrink-0 h-14 border-primary/20 bg-sidebar">
+    <header className="flex items-center justify-between p-2 border-b shrink-0 h-14 border-border bg-background">
       <div className="flex items-center gap-2">
         <Feather className="w-6 h-6 text-primary" />
         <h1 className="text-xl font-bold tracking-tight text-foreground">
