@@ -9,12 +9,13 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, Download, Feather, Languages, Loader2, Target, BookCheck, FileText, Type, Clock } from 'lucide-react'
+import { BarChart, Download, Feather, Languages, Loader2, Target, BookCheck, FileText, Type, PencilRuler } from 'lucide-react'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
 export default function TopIsland({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
+  const [rewriteLength, setRewriteLength] = React.useState<number>(100);
   
   const handleExportPdf = () => {
     const editor = document.getElementById('editor')
@@ -32,12 +33,13 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
 
   const renderContent = () => (
       <Tabs defaultValue="actions" className="w-full">
-        <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105 border border-primary/20">
+        <TabsList className="grid grid-cols-8 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105 border border-primary/20">
             <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
             <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
             <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
             <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
             <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
+            <TabsTrigger value="rewrite" aria-label="Rewrite" className="transition-all transform hover:scale-110"><PencilRuler/></TabsTrigger>
             <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
             <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
         </TabsList>
@@ -115,6 +117,22 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
                 <Button onClick={() => actions.onTranslate(state.selectedText, language)} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
                     {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                     Translate Text
+                </Button>
+            </div>
+        </TabsContent>
+
+        <TabsContent value="rewrite" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
+            <p className="text-sm text-muted-foreground mb-4 text-center">Rewrite selected text to a specific word count.</p>
+            <div className="flex gap-4 justify-center">
+                <Input 
+                type="number" 
+                value={rewriteLength}
+                onChange={(e) => setRewriteLength(Number(e.target.value))}
+                className="w-24 bg-background"
+                />
+                <Button onClick={() => actions.onRewrite(state.selectedText, rewriteLength)} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
+                    {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
+                    Rewrite Text
                 </Button>
             </div>
         </TabsContent>
