@@ -12,7 +12,6 @@ import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-langua
 import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { cn } from '@/lib/utils';
-import AOS from 'aos';
 
 declare global {
     interface Window {
@@ -105,7 +104,7 @@ export default function ChronicleLayout() {
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.AOS) {
       window.AOS.init({
         once: true,
         disable: 'phone',
@@ -226,7 +225,7 @@ export default function ChronicleLayout() {
                 className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm font-glow">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[10px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
             </section>
 
@@ -253,5 +252,3 @@ export default function ChronicleLayout() {
     </div>
   );
 }
-
-    
