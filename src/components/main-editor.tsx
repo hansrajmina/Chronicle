@@ -2,13 +2,14 @@
 
 import React, { useRef, useEffect, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Clock, FileBadge } from 'lucide-react';
+import { Clock, FileText } from 'lucide-react';
 
 interface MainEditorProps {
   content: string;
   font: 'inter' | 'lora' | 'mono';
   onContentChange: (content: string) => void;
   onSelectionChange: () => void;
+  onFocus: () => void;
 }
 
 const fontClasses = {
@@ -18,7 +19,7 @@ const fontClasses = {
 }
 
 const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
-  ({ content, onContentChange, onSelectionChange, font }, ref) => {
+  ({ content, onContentChange, onSelectionChange, font, onFocus }, ref) => {
   const localRef = useRef<HTMLDivElement>(null);
   const internalRef = (ref || localRef) as React.RefObject<HTMLDivElement>;
 
@@ -46,8 +47,9 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
             onInput={handleInput}
             onMouseUp={onSelectionChange}
             onKeyUp={onSelectionChange}
+            onFocus={onFocus}
             className={cn(
-                'w-full h-full p-8 md:p-12 lg:p-16 focus:outline-none overflow-y-auto prose dark:prose-invert lg:prose-xl',
+                'w-full h-full p-8 md:p-12 lg:p-16 focus:outline-none overflow-y-auto prose prose-invert lg:prose-xl',
                 fontClasses[font],
                 'relative'
             )}
@@ -55,14 +57,14 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
             />
         {isEmpty && (
             <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none text-center"
+                className="absolute top-16 left-16 text-muted-foreground pointer-events-none"
             >
                 Start writing your masterpiece...
             </div>
         )}
         <div className="absolute bottom-4 right-4 flex items-center gap-4 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
             <div className="flex items-center gap-2">
-                <FileBadge className="w-4 h-4" />
+                <FileText className="w-4 h-4" />
                 <span>{wordCount} words</span>
             </div>
             <div className="flex items-center gap-2">
