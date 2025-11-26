@@ -187,10 +187,12 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-        <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap mr-2">
-            <Feather className="w-4 h-4 text-primary" />
-            CHRONICLE AI
-        </h1>
+        <div className="flex-1">
+          <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
+              <Feather className="w-4 h-4 text-primary" />
+              CHRONICLE AI
+          </h1>
+        </div>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
             <TabButton value="gamification"><BarChart/></TabButton>
