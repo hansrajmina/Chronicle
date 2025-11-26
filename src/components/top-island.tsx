@@ -82,18 +82,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
                 </Select>
             </div>
         ),
-        gamification: (
-             <div className="flex justify-around text-center text-foreground">
-                <div>
-                    <p className="text-2xl font-bold">{state.gamification.xp}</p>
-                    <p className="text-xs text-muted-foreground">Total XP</p>
-                </div>
-                <div>
-                    <p className="text-2xl font-bold">{state.gamification.streak}</p>
-                    <p className="text-xs text-muted-foreground">Day Streak</p>
-                </div>
-            </div>
-        ),
         humanizer: (
             <>
                 <p className="text-sm text-muted-foreground mb-4 text-center">Select text in the editor to make it sound more natural.</p>
@@ -180,7 +168,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex-1">
           <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
@@ -190,7 +178,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         </div>
         <div className="flex items-center gap-1">
             <TabButton value="font"><Type/></TabButton>
-            <TabButton value="gamification"><BarChart/></TabButton>
             <TabButton value="humanizer"><Feather/></TabButton>
             <TabButton value="language"><Languages/></TabButton>
             <TabButton value="rewrite"><PencilRuler/></TabButton>
