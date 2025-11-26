@@ -14,8 +14,8 @@ export default function Header() {
         </h1>
       </div>
       <div className="md:hidden">
-        <SidebarTrigger asChild>
-            <Button variant="ghost" size="icon"><Feather/></Button>
+        <SidebarTrigger>
+            <Feather/>
         </SidebarTrigger>
       </div>
     </header>
