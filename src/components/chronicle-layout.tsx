@@ -12,6 +12,7 @@ import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-langua
 import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { cn } from '@/lib/utils';
+import AOS from 'aos';
 
 declare global {
     interface Window {
@@ -104,7 +105,7 @@ export default function ChronicleLayout() {
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.AOS) {
+    if (typeof window !== 'undefined') {
       window.AOS.init({
         once: true,
         disable: 'phone',
@@ -112,7 +113,7 @@ export default function ChronicleLayout() {
         easing: 'ease-out-cubic',
       });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const savedXP = parseInt(localStorage.getItem('chronicle_xp') || '0', 10);
@@ -181,7 +182,10 @@ export default function ChronicleLayout() {
       if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
       if (result.rewrittenText) dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
       if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
-      if (!result.expandedText) toast({ title: "Success", description: successMsg });
+      if (!result.expandedText) {
+          setActiveTab('view-text');
+          toast({ title: "Success", description: successMsg });
+      }
     } catch (error) {
       console.error(error);
       toast({ variant: "destructive", title: "AI Error", description: "Could not process request." });
@@ -216,24 +220,14 @@ export default function ChronicleLayout() {
         setIsEditorEnlarged={setIsEditorEnlarged}
       />
       
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
         <div className={cn("w-full flex flex-col md:flex-row items-center justify-center gap-8 transition-all duration-500", isEditorEnlarged ? 'md:items-start' : 'md:items-center')}>
             <section 
                 className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 [text-wrap:balance] drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm font-glow">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[10px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
-                <div className="mt-8">
-                  <Button 
-                    onClick={onContinueWriting} 
-                    disabled={isEditorEnlarged || state.wordCount === 0}
-                    className="w-full max-w-xs transition-transform transform hover:scale-105"
-                  >
-                      <Sparkles className="mr-2" />
-                      Continue Writing
-                  </Button>
-                </div>
             </section>
 
             <section 
@@ -249,9 +243,6 @@ export default function ChronicleLayout() {
                       content={state.editorContent}
                       onContentChange={handleContentChange}
                       onSelectionChange={handleSelectionChange}
-                      onFocus={() => {
-                        setActiveTab(null);
-                      }}
                     />
                   </div>
                 </div>
@@ -262,3 +253,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    

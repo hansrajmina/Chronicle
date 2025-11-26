@@ -9,7 +9,6 @@ interface MainEditorProps {
   font: 'inter' | 'lora' | 'mono';
   onContentChange: (content: string) => void;
   onSelectionChange: () => void;
-  onFocus: () => void;
 }
 
 const fontClasses = {
@@ -19,7 +18,7 @@ const fontClasses = {
 }
 
 const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
-  ({ content, onContentChange, onSelectionChange, font, onFocus }, ref) => {
+  ({ content, onContentChange, onSelectionChange, font }, ref) => {
   const localRef = useRef<HTMLDivElement>(null);
   const internalRef = (ref || localRef) as React.RefObject<HTMLDivElement>;
 
@@ -47,7 +46,6 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
             onInput={handleInput}
             onMouseUp={onSelectionChange}
             onKeyUp={onSelectionChange}
-            onFocus={onFocus}
             className={cn(
                 'w-full h-full p-8 focus:outline-none overflow-y-auto prose prose-invert lg:prose-xl',
                 fontClasses[font],
@@ -79,3 +77,5 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
 MainEditor.displayName = "MainEditor";
 
 export default MainEditor;
+
+    

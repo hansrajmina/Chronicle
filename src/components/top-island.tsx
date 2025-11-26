@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, Type, PencilRuler } from 'lucide-react'
+import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, Type, PencilRuler, History } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
@@ -145,7 +145,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         references: (
             <>
                 <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
-                <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
+                <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.wordCount === 0 || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                 Find References
             </Button>
@@ -195,6 +195,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="language"><Languages/></TabButton>
             <TabButton value="rewrite"><PencilRuler/></TabButton>
             <TabButton value="references"><BookCheck/></TabButton>
+            <TabButton value="view-text"><History/></TabButton>
             <TabButton value="download"><Download onClick={handleExportPdf} /></TabButton>
         </div>
       </div>
@@ -205,4 +206,5 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   )
 }
 
+    
     
