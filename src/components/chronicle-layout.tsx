@@ -206,7 +206,7 @@ export default function ChronicleLayout() {
                 data-aos="fade-right"
             >
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase font-glow">THE FUTURE OF WRITING IS HERE</h1>
-                <p className="mt-4 text-sm text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+                <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <div className="mt-8">
                   <Button 
                     onClick={() => setIsEditorEnlarged(true)} 
