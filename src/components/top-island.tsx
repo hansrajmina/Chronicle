@@ -19,10 +19,12 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   
   const handleExportPdf = () => {
     const editor = document.getElementById('editor');
-    const editorContent = document.getElementById('editor-content');
-
-    if (editor && editorContent) {
-      // Temporarily remove the placeholder text if it exists
+    if (editor) {
+      const editorContent = editor.querySelector('#editor-content') as HTMLElement;
+      
+      const originalMinHeight = editorContent.style.minHeight;
+      editorContent.style.minHeight = 'initial';
+      
       const placeholder = editor.querySelector('.pointer-events-none');
       if (placeholder) {
         (placeholder as HTMLElement).style.display = 'none';
@@ -31,19 +33,12 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
       html2canvas(editor, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null, 
-        onclone: (document, element) => {
-          element.style.minHeight = 'initial';
-          const content = element.querySelector('#editor-content') as HTMLElement;
-          if (content) {
-            content.style.minHeight = 'initial';
-          }
-        }
+        backgroundColor: null,
       }).then((canvas) => {
-        // Restore placeholder if it was hidden
         if (placeholder) {
-            (placeholder as HTMLElement).style.display = 'block';
+          (placeholder as HTMLElement).style.display = 'block';
         }
+        editorContent.style.minHeight = originalMinHeight;
 
         const imgData = canvas.toDataURL('image/png')
         const pdf = new jsPDF('p', 'mm', 'a4')
@@ -185,7 +180,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex-1">
           <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
