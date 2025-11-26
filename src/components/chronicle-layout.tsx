@@ -13,6 +13,12 @@ import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { cn } from '@/lib/utils';
 
+declare global {
+    interface Window {
+        AOS: any;
+    }
+}
+
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
 type GamificationState = {
@@ -98,6 +104,17 @@ export default function ChronicleLayout() {
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.AOS) {
+      window.AOS.init({
+        once: true,
+        disable: 'phone',
+        duration: 500,
+        easing: 'ease-out-cubic',
+      });
+    }
+  }, [])
+
+  useEffect(() => {
     const savedXP = parseInt(localStorage.getItem('chronicle_xp') || '0', 10);
     const savedStreak = parseInt(localStorage.getItem('chronicle_streak') || '0', 10);
     const lastWriteDate = localStorage.getItem('chronicle_lastWriteDate');
@@ -139,8 +156,9 @@ export default function ChronicleLayout() {
 
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
-    dispatch({ type: 'SET_SELECTED_TEXT', payload: selection?.toString() || '' });
-    setActiveTab(null);
+    if (selection && selection.toString()) {
+      dispatch({ type: 'SET_SELECTED_TEXT', payload: selection?.toString() || '' });
+    }
   }, []);
 
   const handleApiCall = async (apiFn: Function, payload: any, successMsg: string) => {
@@ -244,5 +262,3 @@ export default function ChronicleLayout() {
     </div>
   );
 }
-
-    

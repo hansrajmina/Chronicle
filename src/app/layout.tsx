@@ -22,9 +22,6 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
       </head>
       <body>
-        <script>
-            AOS.init();
-        </script>
         {children}
         <Toaster />
       </body>
