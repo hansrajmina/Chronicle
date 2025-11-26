@@ -11,6 +11,7 @@ import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
 import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-language';
 import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
+import { cn } from '@/lib/utils';
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
@@ -92,6 +93,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 export default function ChronicleLayout() {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [isEditorEnlarged, setIsEditorEnlarged] = useState(false);
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -116,7 +118,6 @@ export default function ChronicleLayout() {
     const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
 
     // Gamification Logic
-    const wordDiff = newWordCount - oldWordCount;
     if (wordDiff > 5) {
         const newXp = state.gamification.xp + Math.floor(wordDiff / 5);
         const today = new Date().toISOString().split('T')[0];
@@ -171,7 +172,12 @@ export default function ChronicleLayout() {
     }
   };
 
-  const onContinueWriting = () => handleApiCall(expandTextWithAI, { text: state.editorContent }, 'Text expanded successfully.');
+  const onContinueWriting = () => {
+    if (!isEditorEnlarged) {
+      setIsEditorEnlarged(true);
+    }
+    handleApiCall(expandTextWithAI, { text: state.editorContent }, 'Text expanded successfully.');
+  };
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
@@ -190,44 +196,59 @@ export default function ChronicleLayout() {
         setActiveTab={setActiveTab}
       />
       
-      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 mt-24">
-        <section className="w-full max-w-4xl text-center my-16" data-aos="fade-up">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">The Future of Writing is Here</h1>
-            <p className="mt-4 text-lg text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
-            <div className="mt-8">
-              <Button 
-                onClick={onContinueWriting} 
-                disabled={state.aiLoading || state.wordCount === 0} 
-                className="w-full max-w-xs transition-transform transform hover:scale-105"
-              >
-                  {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                  Continue Writing
-              </Button>
-            </div>
-        </section>
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24">
+        <div className={cn("w-full flex flex-col md:flex-row items-center justify-center gap-8 transition-all duration-500", isEditorEnlarged ? 'md:items-start' : 'md:items-center')}>
+            <section 
+                className={cn("text-center md:text-left transition-all duration-500", isEditorEnlarged ? 'md:w-1/4 opacity-0 md:opacity-100' : 'md:w-1/3')}
+                data-aos="fade-right"
+            >
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">The Future of Writing is Here</h1>
+                <p className="mt-4 text-lg text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+                <div className="mt-8">
+                  <Button 
+                    onClick={() => setIsEditorEnlarged(true)} 
+                    disabled={isEditorEnlarged}
+                    className="w-full max-w-xs transition-transform transform hover:scale-105"
+                  >
+                      <Sparkles className="mr-2" />
+                      Start Writing
+                  </Button>
+                </div>
+            </section>
 
-        <section className="w-full max-w-4xl" data-aos="fade-up" data-aos-delay="200">
-            <div className="w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 hover:shadow-primary/20">
-              <div className="p-0">
-                <MainEditor
-                  ref={editorRef}
-                  font={state.font}
-                  content={state.editorContent}
-                  onContentChange={handleContentChange}
-                  onSelectionChange={handleSelectionChange}
-                  onFocus={() => setActiveTab(null)}
-                />
-              </div>
-            </div>
-        </section>
-
-        <section className="w-full max-w-4xl text-center my-24" data-aos="fade-up">
-            <h2 className="text-4xl font-bold">AI-Powered Features</h2>
-            <p className="mt-2 text-muted-foreground">Enhance your writing with a single click.</p>
-        </section>
+            <section 
+                className={cn("w-full transition-all duration-500", isEditorEnlarged ? 'md:w-3/4' : 'md:w-1/2')}
+                data-aos="fade-left" 
+                data-aos-delay="200"
+            >
+                <div className="w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 hover:shadow-primary/20">
+                  <div className="p-0">
+                    <MainEditor
+                      ref={editorRef}
+                      font={state.font}
+                      content={state.editorContent}
+                      onContentChange={handleContentChange}
+                      onSelectionChange={handleSelectionChange}
+                      onFocus={() => {
+                        setActiveTab(null);
+                        if (!isEditorEnlarged) setIsEditorEnlarged(true);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 text-center">
+                    <Button 
+                        onClick={onContinueWriting} 
+                        disabled={state.aiLoading || state.wordCount === 0} 
+                        className="w-full max-w-xs transition-transform transform hover:scale-105"
+                    >
+                        {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
+                        Continue Writing
+                    </Button>
+                </div>
+            </section>
+        </div>
       </main>
     </div>
   );
 }
-
-    

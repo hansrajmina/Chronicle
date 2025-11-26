@@ -36,7 +36,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
     onContentChange(e.currentTarget.innerHTML);
   };
   
-  const isEmpty = !content || content === '<p><br></p>';
+  const isEmpty = !content || content === '<p><br></p>' || content === '';
 
   return (
     <div className='relative'>
@@ -49,15 +49,15 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
             onKeyUp={onSelectionChange}
             onFocus={onFocus}
             className={cn(
-                'w-full h-full p-8 md:p-12 lg:p-16 focus:outline-none overflow-y-auto prose prose-invert lg:prose-xl',
+                'w-full h-full p-8 focus:outline-none overflow-y-auto prose prose-invert lg:prose-xl',
                 fontClasses[font],
                 'relative'
             )}
-            style={{ minHeight: 'calc(100vh - 20rem)' }}
+            style={{ minHeight: '300px' }}
             />
         {isEmpty && (
             <div 
-                className="absolute top-16 left-16 text-muted-foreground pointer-events-none"
+                className="absolute top-8 left-8 text-muted-foreground pointer-events-none"
             >
                 Start writing your masterpiece...
             </div>
