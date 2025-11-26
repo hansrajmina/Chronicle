@@ -34,6 +34,8 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     onContentChange(e.currentTarget.innerHTML);
   };
+  
+  const isEmpty = !content || content === '<p><br></p>';
 
   return (
     <div className='relative'>
@@ -46,10 +48,18 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
             onKeyUp={onSelectionChange}
             className={cn(
                 'w-full h-full p-8 md:p-12 lg:p-16 focus:outline-none overflow-y-auto prose dark:prose-invert lg:prose-xl',
-                fontClasses[font]
+                fontClasses[font],
+                'relative'
             )}
             style={{ minHeight: 'calc(100vh - 20rem)' }}
             />
+        {isEmpty && (
+            <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none text-center"
+            >
+                Start writing your masterpiece...
+            </div>
+        )}
         <div className="absolute bottom-4 right-4 flex items-center gap-4 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
             <div className="flex items-center gap-2">
                 <FileBadge className="w-4 h-4" />

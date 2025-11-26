@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText, Type } from 'lucide-react'
+import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText, Type, Clock } from 'lucide-react'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
@@ -33,19 +33,17 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
 
   const renderContent = () => (
       <Tabs defaultValue="actions" className="w-full">
-        <div className="flex justify-center">
-            <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105">
-                <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
-                <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
-                <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
-                <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
-                <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
-                <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
-                <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
-            </TabsList>
-        </div>
+        <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105 border border-primary/20">
+            <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
+            <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
+            <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
+            <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
+            <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
+            <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
+            <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
+        </TabsList>
 
-        <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border">
+        <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <TabsContent value="font">
                 <div className="flex items-center gap-4 justify-center">
                     <Select value={state.font} onValueChange={actions.onSetFont}>
@@ -58,10 +56,6 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
                             <SelectItem value="mono">Monospace</SelectItem>
                         </SelectContent>
                     </Select>
-                     <Button onClick={handleExportPdf} variant="secondary" className="w-48">
-                        <Download className="mr-2" />
-                        Export as PDF
-                    </Button>
                 </div>
             </TabsContent>
 
@@ -157,15 +151,28 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
   );
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4">
-      <div className="bg-card/80 backdrop-blur-sm rounded-lg border border-border p-2 flex items-center justify-between shadow-lg mb-2">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+      <div className="bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20 p-2 flex items-center justify-between shadow-lg mb-2">
          <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
             <Feather className="w-5 h-5 text-primary" />
             Chronicle AI
         </h1>
-        {/* Stats are now in MainEditor */}
+        <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+                <FileText className="w-4 h-4" />
+                <span>{state.wordCount} words</span>
+                 <Clock className="w-4 h-4" />
+                <span>{state.readingTime} min read</span>
+            </div>
+             <Button onClick={handleExportPdf} variant="outline" size="sm">
+                <Download className="mr-2" />
+                Export
+            </Button>
+        </div>
       </div>
-      {renderContent()}
+      <div className="w-full max-w-md mx-auto">
+        {renderContent()}
+      </div>
     </div>
   )
 }

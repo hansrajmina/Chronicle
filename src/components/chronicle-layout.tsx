@@ -48,8 +48,8 @@ type AppAction =
 
 
 const initialState: AppState = {
-  editorContent: '<p>Start writing your masterpiece...</p>',
-  wordCount: 4,
+  editorContent: '',
+  wordCount: 0,
   readingTime: 0,
   selectedText: '',
   gamification: { xp: 0, streak: 0, lastWriteDate: null },
