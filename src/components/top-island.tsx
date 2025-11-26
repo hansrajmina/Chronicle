@@ -22,7 +22,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     if (editorNode) {
       const contentNode = editorNode.querySelector('#editor-content') as HTMLElement;
       const statsNode = editorNode.querySelector('.absolute.bottom-4.right-4') as HTMLElement;
-      const placeholderNode = editorNode.querySelector('.absolute.top-8.left-8') as HTMLElement;
+      const placeholderNode = editorNode.querySelector('.pointer-events-none') as HTMLElement;
 
       // Temporarily modify styles for capture
       if (statsNode) statsNode.style.display = 'none';
@@ -83,13 +83,13 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </div>
         ),
         humanizer: (
-            <>
+            <div className="flex flex-col items-center">
                 <p className="text-sm text-muted-foreground mb-4 text-center">Select text in the editor to make it sound more natural.</p>
                 <Button onClick={() => { actions.onHumanize(state.selectedText); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                 Humanize Text
             </Button>
-            </>
+            </div>
         ),
         language: (
              <>
@@ -168,9 +168,9 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-        <div className="flex-1 flex items-center">
+        <div className="flex items-center justify-start flex-1">
           <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
               <Feather className="w-4 h-4 text-primary" />
               CHRONICLE AI
