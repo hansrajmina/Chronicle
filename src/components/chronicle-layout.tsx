@@ -192,8 +192,18 @@ export default function ChronicleLayout() {
       
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 mt-24">
         <section className="w-full max-w-4xl text-center my-16" data-aos="fade-up">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter">The Future of Writing is Here</h1>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">The Future of Writing is Here</h1>
             <p className="mt-4 text-lg text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+            <div className="mt-8">
+              <Button 
+                onClick={onContinueWriting} 
+                disabled={state.aiLoading || state.wordCount === 0} 
+                className="w-full max-w-xs transition-transform transform hover:scale-105"
+              >
+                  {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
+                  Continue Writing
+              </Button>
+            </div>
         </section>
 
         <section className="w-full max-w-4xl" data-aos="fade-up" data-aos-delay="200">
@@ -208,16 +218,6 @@ export default function ChronicleLayout() {
                   onFocus={() => setActiveTab(null)}
                 />
               </div>
-              <div className="flex flex-col items-center justify-center p-4 border-t">
-                  <Button 
-                    onClick={onContinueWriting} 
-                    disabled={state.aiLoading || state.wordCount === 0} 
-                    className="w-full max-w-xs transition-transform transform hover:scale-105"
-                  >
-                      {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                      Continue Writing
-                  </Button>
-              </div>
             </div>
         </section>
 
@@ -229,3 +229,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
