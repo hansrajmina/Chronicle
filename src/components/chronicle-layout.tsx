@@ -37,6 +37,7 @@ type AppState = {
 
 type AppAction =
   | { type: 'SET_EDITOR_CONTENT'; payload: string }
+  | { type: 'SET_REPHRASED_CONTENT'; payload: string }
   | { type: 'SET_SELECTED_TEXT'; payload: string }
   | { type: 'SET_WORD_GOAL'; payload: number }
   | { type: 'SET_AI_LOADING'; payload: boolean }
@@ -73,6 +74,11 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
         const appendedReadingTime = Math.ceil(appendedWordCount / 200);
         return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true };
+    case 'SET_REPHRASED_CONTENT':
+        const rephrasedContent = action.payload;
+        const rephrasedWordCount = rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+        const rephrasedReadingTime = Math.ceil(rephrasedWordCount / 200);
+        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -127,30 +133,37 @@ export default function ChronicleLayout() {
     }
   }, []);
 
-  const handleApiCall = async (apiFn: Function, payload: any, successMsg: string) => {
+  const handleApiCall = async (apiFn: Function, payload: any, successMsg: string, isRephrase = false) => {
     dispatch({ type: 'SET_AI_LOADING', payload: true });
     try {
       const result = await apiFn(payload);
-      if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
-      if (result.expandedText) {
-          dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
-          if (editorRef.current) {
-            editorRef.current.focus();
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(editorRef.current);
-            range.collapse(false);
-            sel?.removeAllRanges();
-            sel?.addRange(range);
-          }
-      }
-      if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
-      if (result.rewrittenText) dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
-      if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
-      if (!result.expandedText) {
-          setActiveTabState('view-text');
-      } else {
+      
+      if (isRephrase && result.humanizedText) {
+        dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.humanizedText });
         toast({ title: "Success", description: successMsg });
+      } else {
+        if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
+        if (result.expandedText) {
+            dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
+            if (editorRef.current) {
+              editorRef.current.focus();
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.selectNodeContents(editorRef.current);
+              range.collapse(false);
+              sel?.removeAllRanges();
+              sel?.addRange(range);
+            }
+        }
+        if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
+        if (result.rewrittenText) dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+        if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
+
+        if (!result.expandedText) {
+            setActiveTabState('view-text');
+        } else {
+          toast({ title: "Success", description: successMsg });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -173,9 +186,7 @@ export default function ChronicleLayout() {
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
   const onRephrase = () => {
-    // We can use the humanize function to rephrase the whole content.
-    handleApiCall(humanizeText, { text: state.editorContent }, 'Text rephrased successfully.');
-    dispatch({ type: 'SET_IS_TEXT_EXPANDED', payload: false });
+    handleApiCall(humanizeText, { text: state.editorContent }, 'Text rephrased successfully.', true);
   };
 
   const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont, onChangeStyle };
@@ -230,3 +241,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
