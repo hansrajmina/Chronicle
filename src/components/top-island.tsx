@@ -18,35 +18,35 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   const [rewriteLength, setRewriteLength] = React.useState<number>(100);
   
   const handleExportPdf = () => {
-    const editor = document.getElementById('editor');
-    if (editor) {
-      const editorContent = editor.querySelector('#editor-content') as HTMLElement;
+    const editorNode = document.getElementById('editor');
+    if (editorNode) {
+      const contentNode = editorNode.querySelector('#editor-content') as HTMLElement;
+      const statsNode = editorNode.querySelector('.absolute.bottom-4.right-4') as HTMLElement;
+      const placeholderNode = editorNode.querySelector('.absolute.top-8.left-8') as HTMLElement;
+
+      // Temporarily modify styles for capture
+      if (statsNode) statsNode.style.display = 'none';
+      if (placeholderNode) placeholderNode.style.display = 'none';
+      const originalColor = contentNode.style.color;
+      contentNode.style.color = 'black';
       
-      const originalMinHeight = editorContent.style.minHeight;
-      editorContent.style.minHeight = 'initial';
-      
-      const placeholder = editor.querySelector('.pointer-events-none');
-      if (placeholder) {
-        (placeholder as HTMLElement).style.display = 'none';
-      }
-      
-      html2canvas(editor, {
+      html2canvas(contentNode, {
         scale: 2,
         useCORS: true,
         backgroundColor: null,
       }).then((canvas) => {
-        if (placeholder) {
-          (placeholder as HTMLElement).style.display = 'block';
-        }
-        editorContent.style.minHeight = originalMinHeight;
+        // Restore original styles
+        if (statsNode) statsNode.style.display = 'flex';
+        if (placeholderNode) placeholderNode.style.display = 'block';
+        contentNode.style.color = originalColor;
 
-        const imgData = canvas.toDataURL('image/png')
-        const pdf = new jsPDF('p', 'mm', 'a4')
-        const pdfWidth = pdf.internal.pageSize.getWidth()
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-        pdf.save('chronicle-document.pdf')
-      })
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('chronicle-document.pdf');
+      });
     }
   }
 
@@ -168,9 +168,9 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
-        <div className="flex-1">
+        <div className="flex-1 flex items-center">
           <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
               <Feather className="w-4 h-4 text-primary" />
               CHRONICLE AI
