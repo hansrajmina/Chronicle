@@ -116,6 +116,7 @@ export default function ChronicleLayout() {
     const oldWordCount = state.wordCount;
     dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
     const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+    const wordDiff = newWordCount - oldWordCount;
 
     // Gamification Logic
     if (wordDiff > 5) {
@@ -211,7 +212,7 @@ export default function ChronicleLayout() {
                     className="w-full max-w-xs transition-transform transform hover:scale-105"
                   >
                       <Sparkles className="mr-2" />
-                      Start Writing
+                      Continue Writing
                   </Button>
                 </div>
             </section>
@@ -252,3 +253,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
