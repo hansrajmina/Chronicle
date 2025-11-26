@@ -34,9 +34,9 @@ Do not repeat the user's text in your response. Only generate the next part of t
 Ensure you add punctuation like commas and full stops where appropriate to make the text flow.
 
 User's text:
-{{{text}}}
+"{{{text}}}"
 
-Your continuation:`,
+Your direct continuation, starting from the character immediately after the user's last word:`,
 });
 
 const expandTextWithAIFlow = ai.defineFlow(
