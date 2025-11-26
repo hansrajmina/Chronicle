@@ -183,7 +183,8 @@ export default function ChronicleLayout() {
       if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
       if (!result.expandedText) {
           setActiveTab('view-text');
-          toast({ title: "Success", description: successMsg });
+      } else {
+        toast({ title: "Success", description: successMsg });
       }
     } catch (error) {
       console.error(error);
@@ -196,7 +197,6 @@ export default function ChronicleLayout() {
   };
 
   const onContinueWriting = () => {
-    setIsEditorEnlarged(true);
     handleApiCall(expandTextWithAI, { text: state.editorContent }, 'Text expanded successfully.');
   };
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
@@ -220,7 +220,7 @@ export default function ChronicleLayout() {
       />
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
-        <div className={cn("w-full flex flex-col md:flex-row items-center justify-center gap-8 transition-all duration-500", isEditorEnlarged ? 'md:items-start' : 'md:items-center')}>
+        <div className={cn("w-full flex flex-col md:flex-row items-center justify-center gap-8 transition-all duration-500", isEditorEnlarged ? 'md:items-start md:gap-0' : 'md:items-center')}>
             <section 
                 className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
@@ -238,7 +238,10 @@ export default function ChronicleLayout() {
                 data-aos="fade-left" 
                 data-aos-delay="200"
             >
-                <div className="w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 hover:shadow-primary/20">
+                <div className={cn(
+                  "w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 hover:shadow-primary/20",
+                  state.aiLoading && 'shadow-primary/40'
+                )}>
                   <div className="p-0">
                     <MainEditor
                       ref={editorRef}
@@ -256,3 +259,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
