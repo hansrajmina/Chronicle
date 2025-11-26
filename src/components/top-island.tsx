@@ -182,7 +182,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
          <div className="flex items-center gap-2">
             <TabButton value="back" disabled={!isEditorEnlarged}><ChevronsLeft onClick={() => setIsEditorEnlarged(false)} /></TabButton>
-             <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
+             <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
                 <Feather className="w-5 h-5 text-primary" />
                 CHRONICLE AI
             </h1>
@@ -204,3 +204,5 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
+
+    
