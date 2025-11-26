@@ -133,13 +133,13 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </>
         ),
         references: (
-            <>
+            <div className="flex flex-col items-center">
                 <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
                 <Button onClick={() => { actions.onFetchReferences(state.editorContent); setActiveTab(null); }} disabled={state.wordCount === 0 || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                 Find References
             </Button>
-            </>
+            </div>
         ),
         'view-text': (
             (state.aiResult || state.references.length > 0) ? (
@@ -171,7 +171,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex items-center justify-start flex-1">
-          <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap">
+          <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase whitespace-nowrap mr-4">
               <Feather className="w-4 h-4 text-primary" />
               CHRONICLE AI
           </h1>
