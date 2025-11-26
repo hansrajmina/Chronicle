@@ -234,7 +234,7 @@ export default function ChronicleLayout() {
             </section>
 
             <section 
-                className={cn("w-full transition-all duration-500", isEditorEnlarged ? 'md:w-3/4' : 'md:w-1/2')}
+                className={cn("w-full transition-all duration-500", isEditorEnlarged ? 'md:w-full' : 'md:w-1/2')}
                 data-aos="fade-left" 
                 data-aos-delay="200"
             >
@@ -256,5 +256,3 @@ export default function ChronicleLayout() {
     </div>
   );
 }
-
-    

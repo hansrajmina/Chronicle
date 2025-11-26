@@ -31,9 +31,9 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     }
   }
 
-  const TabButton = ({ value, children, disabled }: { value: string, children: React.ReactNode, disabled?: boolean }) => (
+  const TabButton = ({ value, children, disabled, onClick }: { value: string, children: React.ReactNode, disabled?: boolean, onClick?: () => void }) => (
     <button
-      onClick={() => !disabled && setActiveTab(activeTab === value ? null : value)}
+      onClick={onClick || (() => !disabled && setActiveTab(activeTab === value ? null : value))}
       disabled={disabled}
       className={cn(
         "p-2 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
@@ -181,7 +181,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
          <div className="flex items-center gap-2">
-            <TabButton value="back" disabled={!isEditorEnlarged}><ChevronsLeft onClick={() => setIsEditorEnlarged(false)} /></TabButton>
+            <TabButton value="back" disabled={!isEditorEnlarged} onClick={() => setIsEditorEnlarged(false)}><ChevronsLeft /></TabButton>
              <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
                 <Feather className="w-5 h-5 text-primary" />
                 CHRONICLE AI
@@ -196,7 +196,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="rewrite"><PencilRuler/></TabButton>
             <TabButton value="references"><BookCheck/></TabButton>
             <TabButton value="view-text"><History/></TabButton>
-            <TabButton value="download"><Download onClick={handleExportPdf} /></TabButton>
+            <TabButton value="download" onClick={handleExportPdf}><Download  /></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
