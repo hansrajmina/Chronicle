@@ -32,7 +32,17 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
 
   const renderContent = () => (
       <Tabs defaultValue="actions" className="w-full">
-        <TabsContent value="font">
+        <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105 border border-primary/20">
+            <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
+            <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
+            <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
+            <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
+            <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
+            <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
+            <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="font" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <div className="flex items-center gap-4 justify-center">
                 <Select value={state.font} onValueChange={actions.onSetFont}>
                     <SelectTrigger className="bg-background w-48">
@@ -47,7 +57,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </div>
         </TabsContent>
 
-        <TabsContent value="gamification">
+        <TabsContent value="gamification" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <div className="flex justify-around text-center">
                 <div>
                     <p className="text-2xl font-bold">{state.gamification.xp}</p>
@@ -60,7 +70,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </div>
         </TabsContent>
         
-        <TabsContent value="word-goal">
+        <TabsContent value="word-goal" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <div className="flex items-center gap-4 justify-center">
                 <div className="flex items-center gap-2">
                     <Input 
@@ -78,7 +88,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </div>
         </TabsContent>
 
-        <TabsContent value="humanizer">
+        <TabsContent value="humanizer" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <p className="text-sm text-muted-foreground mb-4 text-center">Select text in the editor to make it sound more natural.</p>
                 <Button onClick={() => actions.onHumanize(state.selectedText)} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
@@ -86,7 +96,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </Button>
         </TabsContent>
 
-        <TabsContent value="language">
+        <TabsContent value="language" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <p className="text-sm text-muted-foreground mb-4 text-center">Translate selected text to an Indian language.</p>
                 <div className="flex gap-4 justify-center">
                 <Select value={language} onValueChange={(v: IndianLanguage) => setLanguage(v)}>
@@ -109,7 +119,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </div>
         </TabsContent>
 
-        <TabsContent value="references">
+        <TabsContent value="references" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
                 <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                 {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
@@ -117,7 +127,7 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             </Button>
         </TabsContent>
 
-        <TabsContent value="view-text">
+        <TabsContent value="view-text" className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             {(state.aiResult || state.references.length > 0) ? (
                 <div>
                     <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2 text-center">AI Result</h4>
@@ -134,15 +144,6 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
                 <p className="text-sm text-muted-foreground text-center">No AI generated text or references to show yet. Use one of the AI tools!</p>
             )}
         </TabsContent>
-        <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105 border border-primary/20">
-            <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
-            <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
-            <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
-            <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
-            <TabsTrigger value="language" aria-label="Language" className="transition-all transform hover:scale-110"><Languages/></TabsTrigger>
-            <TabsTrigger value="references" aria-label="References" className="transition-all transform hover:scale-110"><BookCheck/></TabsTrigger>
-            <TabsTrigger value="view-text" aria-label="View Text" className="transition-all transform hover:scale-110"><FileText/></TabsTrigger>
-        </TabsList>
     </Tabs>
   );
 
@@ -153,21 +154,15 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
             <Feather className="w-5 h-5 text-primary" />
             Chronicle AI
         </h1>
+        <div className="flex-1 px-8">
+            {renderContent()}
+        </div>
         <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-                <FileText className="w-4 h-4" />
-                <span>{state.wordCount} words</span>
-                 <Clock className="w-4 h-4" />
-                <span>{state.readingTime} min read</span>
-            </div>
              <Button onClick={handleExportPdf} variant="outline" size="sm">
                 <Download className="mr-2" />
                 Export
             </Button>
         </div>
-      </div>
-      <div className="w-full max-w-md mx-auto">
-        {renderContent()}
       </div>
     </div>
   )
