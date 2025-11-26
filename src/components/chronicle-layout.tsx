@@ -185,7 +185,7 @@ export default function ChronicleLayout() {
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
-  const actions = { onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont };
+  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
@@ -239,23 +239,10 @@ export default function ChronicleLayout() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 text-center">
-                    <Button 
-                        onClick={onContinueWriting} 
-                        disabled={state.aiLoading || state.wordCount === 0} 
-                        className="w-full max-w-xs transition-transform transform hover:scale-105"
-                    >
-                        {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                        Continue Writing
-                    </Button>
-                </div>
+                
             </section>
         </div>
       </main>
     </div>
   );
 }
-
-    
-
-    
