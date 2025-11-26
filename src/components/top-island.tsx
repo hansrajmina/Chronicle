@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, FileText, Type, PencilRuler, X } from 'lucide-react'
+import { BarChart, ChevronsLeft, Download, Feather, Languages, Loader2, Target, BookCheck, Type, PencilRuler } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
@@ -195,7 +195,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="language"><Languages/></TabButton>
             <TabButton value="rewrite"><PencilRuler/></TabButton>
             <TabButton value="references"><BookCheck/></TabButton>
-            <TabButton value="view-text"><FileText/></TabButton>
             <TabButton value="download"><Download onClick={handleExportPdf} /></TabButton>
         </div>
       </div>
@@ -205,5 +204,3 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
-
-    
