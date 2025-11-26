@@ -36,7 +36,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
       onClick={() => !disabled && setActiveTab(activeTab === value ? null : value)}
       disabled={disabled}
       className={cn(
-        "p-2 rounded-md transition-all duration-200 transform hover:bg-accent hover:scale-110 font-glow text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent",
+        "p-2 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
         activeTab === value ? "bg-accent" : ""
       )}
       aria-label={value}
@@ -205,6 +205,3 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
-
-    
-    
