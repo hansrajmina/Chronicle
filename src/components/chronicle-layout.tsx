@@ -186,20 +186,11 @@ export default function ChronicleLayout() {
             />
           </SidebarInset>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 md:hidden">
-             <SidebarWidgets
-                state={state}
-                dispatch={dispatch}
-                actions={actions}
-              />
-        </div>
-        <div className="hidden md:block">
-            <SidebarWidgets
-                state={state}
-                dispatch={dispatch}
-                actions={actions}
-              />
-        </div>
+        <SidebarWidgets
+          state={state}
+          dispatch={dispatch}
+          actions={actions}
+        />
       </div>
     </SidebarProvider>
   );
