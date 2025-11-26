@@ -170,13 +170,15 @@ export default function ChronicleLayout() {
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
 
+  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences };
+
   return (
     <SidebarProvider>
       <div className="flex flex-col h-screen bg-background">
         <Header />
         <div className="flex flex-1 overflow-hidden">
           <Sidebar side="right" variant="sidebar" collapsible="icon">
-            <SidebarWidgets state={state} dispatch={dispatch} />
+            <SidebarWidgets state={state} dispatch={dispatch} actions={actions} />
           </Sidebar>
           <SidebarInset className="p-4 md:p-6 lg:p-8">
             <MainEditor
@@ -192,7 +194,7 @@ export default function ChronicleLayout() {
         isSheet={true}
         state={state}
         dispatch={dispatch}
-        actions={{ onContinueWriting, onHumanize, onTranslate, onFetchReferences }}
+        actions={actions}
       />
     </SidebarProvider>
   );
