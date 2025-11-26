@@ -205,12 +205,12 @@ export default function ChronicleLayout() {
                 className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase font-glow">The Future of Writing is Here</h1>
-                <p className="mt-4 text-base text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase font-glow">THE FUTURE OF WRITING IS HERE</h1>
+                <p className="mt-4 text-sm text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <div className="mt-8">
                   <Button 
                     onClick={() => setIsEditorEnlarged(true)} 
-                    disabled={isEditorEnlarged}
+                    disabled={isEditorEnlarged || state.wordCount === 0}
                     className="w-full max-w-xs transition-transform transform hover:scale-105"
                   >
                       <Sparkles className="mr-2" />
