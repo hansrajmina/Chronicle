@@ -10,27 +10,17 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText, Clock, FileBadge } from 'lucide-react'
+import { BarChart, Download, Feather, Languages, Loader2, Sparkles, Target, BookCheck, FileText, Type } from 'lucide-react'
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
-const StatCard = ({ title, value, icon }: { title: string, value: string | number, icon: React.ReactNode }) => (
-    <div className="flex items-center gap-2 text-sm">
-      {icon}
-      <div>
-        <p className="font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground">{title}</p>
-      </div>
-    </div>
-  );
-
-export default function SidebarWidgets({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
+export default function TopIsland({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
   
   const handleExportPdf = () => {
     const editor = document.getElementById('editor')
     if (editor) {
-      html2canvas(editor, { scale: 2, backgroundColor: 'hsl(var(--background))' }).then((canvas) => {
+      html2canvas(editor, { scale: 2, useCORS: true, backgroundColor: 'hsl(var(--background))' }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png')
         const pdf = new jsPDF('p', 'mm', 'a4')
         const pdfWidth = pdf.internal.pageSize.getWidth()
@@ -44,8 +34,8 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
   const renderContent = () => (
       <Tabs defaultValue="actions" className="w-full">
         <div className="flex justify-center">
-            <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm">
-                <TabsTrigger value="actions" aria-label="Actions" className="transition-all transform hover:scale-110"><Sparkles/></TabsTrigger>
+            <TabsList className="grid grid-cols-7 bg-muted/80 h-12 px-1 backdrop-blur-sm transform transition-all hover:scale-105">
+                <TabsTrigger value="font" aria-label="Font" className="transition-all transform hover:scale-110"><Type/></TabsTrigger>
                 <TabsTrigger value="gamification" aria-label="Gamification" className="transition-all transform hover:scale-110"><BarChart/></TabsTrigger>
                 <TabsTrigger value="word-goal" aria-label="Word Goal" className="transition-all transform hover:scale-110"><Target/></TabsTrigger>
                 <TabsTrigger value="humanizer" aria-label="Humanizer" className="transition-all transform hover:scale-110"><Feather/></TabsTrigger>
@@ -56,13 +46,19 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
         </div>
 
         <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border">
-            <TabsContent value="actions">
-                <div className="grid grid-cols-2 gap-4">
-                    <Button onClick={actions.onContinueWriting} disabled={state.aiLoading} className="w-full">
-                        {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                        Continue Writing
-                    </Button>
-                    <Button onClick={handleExportPdf} variant="secondary" className="w-full">
+            <TabsContent value="font">
+                <div className="flex items-center gap-4 justify-center">
+                    <Select value={state.font} onValueChange={actions.onSetFont}>
+                        <SelectTrigger className="bg-background w-48">
+                            <SelectValue placeholder="Select Font" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="inter">Inter</SelectItem>
+                            <SelectItem value="lora">Lora</SelectItem>
+                            <SelectItem value="mono">Monospace</SelectItem>
+                        </SelectContent>
+                    </Select>
+                     <Button onClick={handleExportPdf} variant="secondary" className="w-48">
                         <Download className="mr-2" />
                         Export as PDF
                     </Button>
@@ -102,7 +98,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
 
             <TabsContent value="humanizer">
                 <p className="text-sm text-muted-foreground mb-4 text-center">Select text in the editor to make it sound more natural.</p>
-                    <Button onClick={() => actions.onHumanize(state.selectedText)} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto">
+                    <Button onClick={() => actions.onHumanize(state.selectedText)} disabled={!state.selectedText || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                     {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                     Humanize Text
                 </Button>
@@ -124,7 +120,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
                             <SelectItem value="Urdu">Urdu</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button onClick={() => actions.onTranslate(state.selectedText, language)} disabled={!state.selectedText || state.aiLoading} className="w-48">
+                    <Button onClick={() => actions.onTranslate(state.selectedText, language)} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
                         {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                         Translate Text
                     </Button>
@@ -133,7 +129,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
 
             <TabsContent value="references">
                 <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
-                    <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.aiLoading} className="w-full max-w-sm mx-auto">
+                    <Button onClick={() => actions.onFetchReferences(state.editorContent)} disabled={state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
                     {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
                     Find References
                 </Button>
@@ -167,10 +163,7 @@ export default function SidebarWidgets({ state, dispatch, actions }: { state: an
             <Feather className="w-5 h-5 text-primary" />
             Chronicle AI
         </h1>
-        <div className="flex items-center gap-6">
-            <StatCard title="Word Count" value={state.wordCount} icon={<FileBadge className="text-primary" />} />
-            <StatCard title="Reading Time" value={`${state.readingTime} min`} icon={<Clock className="text-primary" />} />
-        </div>
+        {/* Stats are now in MainEditor */}
       </div>
       {renderContent()}
     </div>

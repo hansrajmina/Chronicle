@@ -2,7 +2,7 @@
 
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import MainEditor from '@/components/main-editor';
-import SidebarWidgets from '@/components/sidebar-widgets';
+import TopIsland from '@/components/top-island';
 
 import { humanizeText } from '@/ai/flows/humanize-text';
 import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
@@ -10,6 +10,9 @@ import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-langua
 import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 
 import { useToast } from "@/hooks/use-toast";
+import { Button } from '@/components/ui/button';
+import { Loader2, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
 
@@ -29,6 +32,7 @@ type AppState = {
   aiLoading: boolean;
   aiResult: string;
   references: string[];
+  font: 'inter' | 'lora' | 'mono';
 };
 
 type AppAction =
@@ -39,7 +43,8 @@ type AppAction =
   | { type: 'SET_AI_LOADING'; payload: boolean }
   | { type: 'SET_AI_RESULT'; payload: string }
   | { type: 'SET_REFERENCES'; payload: string[] }
-  | { type: 'APPEND_EDITOR_CONTENT'; payload: string };
+  | { type: 'APPEND_EDITOR_CONTENT'; payload: string }
+  | { type: 'SET_FONT'; payload: 'inter' | 'lora' | 'mono' };
 
 
 const initialState: AppState = {
@@ -52,6 +57,7 @@ const initialState: AppState = {
   aiLoading: false,
   aiResult: '',
   references: [],
+  font: 'inter',
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -79,6 +85,8 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, aiResult: action.payload, references: [] };
     case 'SET_REFERENCES':
         return { ...state, references: action.payload, aiResult: '' };
+    case 'SET_FONT':
+        return { ...state, font: action.payload };
     default:
       return state;
   }
@@ -140,7 +148,7 @@ export default function ChronicleLayout() {
       const result = await apiFn(payload);
       if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
       if (result.expandedText) {
-          dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
+          dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: ` ${result.expandedText}` });
           if (editorRef.current) {
             editorRef.current.focus();
             const range = document.createRange();
@@ -168,24 +176,40 @@ export default function ChronicleLayout() {
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
+  const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences };
+
+  const actions = { onHumanize, onTranslate, onFetchReferences, onSetFont };
 
   return (
-      <div className="flex flex-col h-screen bg-background">
-        <SidebarWidgets
+      <div className="flex flex-col min-h-screen bg-background font-body">
+        <TopIsland
           state={state}
           dispatch={dispatch}
           actions={actions}
         />
-        <div className="flex flex-1 overflow-hidden pt-24">
-            <MainEditor
-              ref={editorRef}
-              content={state.editorContent}
-              onContentChange={handleContentChange}
-              onSelectionChange={handleSelectionChange}
-            />
-        </div>
+        <main className="flex-1 flex items-start justify-center p-4 sm:p-6 md:p-8 mt-24">
+            <Card className="w-full max-w-4xl shadow-2xl rounded-lg transform transition-all duration-300 hover:shadow-2xl">
+              <CardHeader className="border-b">
+                 {/* This could be a title bar for the editor card if needed */}
+              </CardHeader>
+              <CardContent className="p-0">
+                <MainEditor
+                  ref={editorRef}
+                  font={state.font}
+                  content={state.editorContent}
+                  onContentChange={handleContentChange}
+                  onSelectionChange={handleSelectionChange}
+                />
+              </CardContent>
+              <CardFooter className="flex flex-col items-center justify-center p-4 border-t">
+                  <Button onClick={onContinueWriting} disabled={state.aiLoading} className="w-full max-w-xs transition-transform transform hover:scale-105">
+                      {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
+                      Continue Writing
+                  </Button>
+              </CardFooter>
+            </Card>
+        </main>
       </div>
   );
 }
