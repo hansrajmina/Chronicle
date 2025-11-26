@@ -35,8 +35,8 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     <button
       onClick={() => setActiveTab(activeTab === value ? null : value)}
       className={cn(
-        "p-2 rounded-md transition-all duration-200 transform hover:bg-accent hover:scale-110",
-        activeTab === value ? "bg-accent text-primary" : "text-foreground"
+        "p-2 rounded-md transition-all duration-200 transform hover:bg-accent hover:scale-110 font-glow text-primary",
+        activeTab === value ? "bg-accent" : ""
       )}
       aria-label={value}
     >
