@@ -222,7 +222,7 @@ export default function ChronicleLayout() {
                 className={cn("text-center md:text-left transition-opacity duration-500", isEditorEnlarged ? 'md:w-0 opacity-0' : 'md:w-1/3 opacity-100')}
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase font-hollow">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 [text-wrap:balance] drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <div className="mt-8">
                   <Button 
