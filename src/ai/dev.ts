@@ -1,1 +1,7 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/humanize-text.ts';
+import '@/ai/flows/expand-text-with-ai.ts';
+import '@/ai/flows/fetch-academic-references.ts';
+import '@/ai/flows/translate-to-indian-language.ts';
