@@ -26,8 +26,8 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   const readingTime = Math.ceil(wordCount / 200);
 
   useEffect(() => {
-    if (internalRef.current && internalRef.current.innerHTML !== content) {
-      internalRef.current.innerHTML = content;
+    if (internalRef.current && internalRef.current.querySelector('#editor-content')!.innerHTML !== content) {
+      internalRef.current.querySelector('#editor-content')!.innerHTML = content;
     }
   }, [content, internalRef]);
 
@@ -38,10 +38,9 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   const isEmpty = !content || content === '<p><br></p>' || content === '';
 
   return (
-    <div className='relative'>
+    <div className='relative' id="editor" ref={internalRef}>
         <div
-            id="editor"
-            ref={internalRef}
+            id="editor-content"
             contentEditable
             onInput={handleInput}
             onMouseUp={onSelectionChange}
@@ -77,5 +76,3 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
 MainEditor.displayName = "MainEditor";
 
 export default MainEditor;
-
-    

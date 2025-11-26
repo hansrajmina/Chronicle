@@ -20,7 +20,28 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   const handleExportPdf = () => {
     const editor = document.getElementById('editor')
     if (editor) {
-      html2canvas(editor, { scale: 2, useCORS: true, backgroundColor: 'hsl(var(--background))' }).then((canvas) => {
+      // Temporarily remove the placeholder text if it exists
+      const placeholder = editor.querySelector('.pointer-events-none');
+      if (placeholder) {
+        (placeholder as HTMLElement).style.display = 'none';
+      }
+      
+      html2canvas(editor, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null, // Make background transparent
+        onclone: (document) => {
+          const clonedEditor = document.getElementById('editor');
+          if(clonedEditor) {
+            clonedEditor.style.backgroundColor = 'hsl(var(--background))';
+          }
+        }
+      }).then((canvas) => {
+        // Restore placeholder if it was hidden
+        if (placeholder) {
+            (placeholder as HTMLElement).style.display = 'block';
+        }
+
         const imgData = canvas.toDataURL('image/png')
         const pdf = new jsPDF('p', 'mm', 'a4')
         const pdfWidth = pdf.internal.pageSize.getWidth()
@@ -51,7 +72,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     const contentMap: { [key: string]: React.ReactNode } = {
         font: (
             <div className="flex items-center gap-4 justify-center">
-                <Select value={state.font} onValueChange={actions.onSetFont}>
+                <Select value={state.font} onValueChange={(font) => { actions.onSetFont(font); setActiveTab(null); }}>
                     <SelectTrigger className="bg-secondary w-48">
                         <SelectValue placeholder="Select Font" />
                     </SelectTrigger>
@@ -72,23 +93,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
                 <div>
                     <p className="text-2xl font-bold">{state.gamification.streak}</p>
                     <p className="text-xs text-muted-foreground">Day Streak</p>
-                </div>
-            </div>
-        ),
-        'word-goal': (
-            <div className="flex items-center gap-4 justify-center">
-                <div className="flex items-center gap-2">
-                    <Input 
-                    type="number" 
-                    value={state.wordGoal}
-                    onChange={(e) => dispatch({ type: 'SET_WORD_GOAL', payload: Number(e.target.value) })}
-                    className="w-24 bg-secondary"
-                    />
-                    <span className="text-sm text-muted-foreground">words</span>
-                </div>
-                <div className="w-1/2">
-                    <Progress value={(state.wordCount / state.wordGoal) * 100} />
-                    <p className="text-sm text-center text-muted-foreground mt-1">{state.wordCount} / {state.wordGoal} words</p>
                 </div>
             </div>
         ),
@@ -178,10 +182,10 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-1 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
          <div className="flex items-center gap-1">
-             <h1 className="text-md font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
+             <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 pl-2 uppercase">
                 <Feather className="w-4 h-4 text-primary" />
                 CHRONICLE AI
             </h1>
@@ -203,5 +207,3 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
-
-    
