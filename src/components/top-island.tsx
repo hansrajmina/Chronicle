@@ -192,8 +192,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="rewrite"><PencilRuler/></TabButton>
             <TabButton value="references"><BookCheck/></TabButton>
             <TabButton value="view-text"><FileText/></TabButton>
-            <div className="w-px h-6 bg-border mx-2"></div>
-            <TabButton value="export"><Download /></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
