@@ -174,9 +174,7 @@ export default function ChronicleLayout() {
   };
 
   const onContinueWriting = () => {
-    if (!isEditorEnlarged) {
-      setIsEditorEnlarged(true);
-    }
+    setIsEditorEnlarged(true);
     handleApiCall(expandTextWithAI, { text: state.editorContent }, 'Text expanded successfully.');
   };
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
@@ -209,7 +207,7 @@ export default function ChronicleLayout() {
                 <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <div className="mt-8">
                   <Button 
-                    onClick={() => setIsEditorEnlarged(true)} 
+                    onClick={onContinueWriting} 
                     disabled={isEditorEnlarged || state.wordCount === 0}
                     className="w-full max-w-xs transition-transform transform hover:scale-105"
                   >
@@ -234,7 +232,6 @@ export default function ChronicleLayout() {
                       onSelectionChange={handleSelectionChange}
                       onFocus={() => {
                         setActiveTab(null);
-                        if (!isEditorEnlarged) setIsEditorEnlarged(true);
                       }}
                     />
                   </div>
