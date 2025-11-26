@@ -49,6 +49,7 @@
 }
 
 .font-hollow {
-    -webkit-text-stroke: 1px hsl(var(--foreground));
+    -webkit-text-stroke: 1px hsla(var(--foreground), 0.5);
     color: transparent;
+    text-shadow: 0px 2px 4px hsla(var(--background), 0.5);
 }
