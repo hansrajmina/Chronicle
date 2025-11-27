@@ -50,7 +50,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   
 
   return (
-    <div className='relative border-4 rounded-lg border-primary/20 editor-glow' id="editor" ref={internalRef}>
+    <div className='relative border-2 rounded-lg border-primary/20' id="editor" ref={internalRef}>
         <div
             id="editor-content"
             contentEditable

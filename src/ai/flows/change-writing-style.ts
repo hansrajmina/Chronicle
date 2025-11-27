@@ -11,7 +11,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { WritingStyleSchema } from '@/ai/schemas';
+import { WritingStyleSchema, type WritingStyle } from '@/ai/schemas';
+
 
 const ChangeWritingStyleInputSchema = z.object({
   text: z.string().describe('The text to rewrite.'),
