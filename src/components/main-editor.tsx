@@ -104,7 +104,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                     ) : (
                         <Wand2 className="w-4 h-4" />
                     )}
-                    <span className="ml-2">Continue writing</span>
+                    <span className="ml-1">Continue Writing</span>
                 </Button>
             )}
         </div>
