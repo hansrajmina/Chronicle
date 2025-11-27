@@ -229,31 +229,25 @@ export default function ChronicleLayout() {
         setActiveTab={setActiveTab}
       />
       
-      <main className={cn(
-          "flex-1 flex flex-col items-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32 transition-all duration-500",
-          hasContent ? 'justify-start' : 'justify-center'
-      )}>
-        <div className="w-full text-center">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
             <section 
                 className={cn(
-                    "text-center transition-all duration-500 aos-init w-full",
-                    hasContent ? 'mb-8' : 'mb-8'
+                    "flex flex-col justify-center text-left transition-all duration-500 aos-init",
+                    hasContent ? 'md:hidden' : 'md:flex'
                 )}
-                data-aos="fade-down"
+                data-aos="fade-right"
             >
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
-                <p className={cn(
-                    "mt-4 text-xs text-muted-foreground transition-opacity duration-500",
-                    hasContent ? 'opacity-0 h-0' : 'opacity-100'
-                )}>Chronicle AI helps you write faster, smarter, and better.</p>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <p className="mt-4 text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
             </section>
 
             <section 
                 className={cn(
                     "w-full transition-all duration-500 aos-init",
-                    hasContent ? 'max-w-4xl mx-auto' : 'max-w-2xl mx-auto'
+                    hasContent ? 'md:col-span-2' : ''
                 )}
-                data-aos="fade-up" 
+                data-aos="fade-left" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}
             >
@@ -271,23 +265,22 @@ export default function ChronicleLayout() {
                     />
                   </div>
                 </div>
+                {hasContent && (
+                    <div className="mt-4 flex justify-end">
+                      <Button 
+                        onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
+                        disabled={state.aiLoading} 
+                        size="lg"
+                        className="transition-transform transform hover:scale-105 shadow-[0_0_20px_4px] shadow-primary/30 hover:shadow-primary/50"
+                      >
+                        {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
+                        {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
+                      </Button>
+                    </div>
+                )}
             </section>
         </div>
       </main>
-
-       {hasContent && (
-        <div className="fixed bottom-8 right-8 z-10">
-          <Button 
-            onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
-            disabled={state.aiLoading} 
-            size="lg"
-            className="px-12 py-6 text-lg transition-transform transform hover:scale-105 shadow-[0_0_20px_4px] shadow-primary/30 hover:shadow-primary/50"
-          >
-            {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
-            {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
