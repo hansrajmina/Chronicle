@@ -230,7 +230,7 @@ export default function ChronicleLayout() {
                 onClick={handleEditorClick}
             >
                 <div className={cn(
-                  "w-full bg-card/50 backdrop-blur-sm border-2 rounded-lg shadow-2xl transition-all duration-300",
+                  "w-full bg-card/50 backdrop-blur-sm border-4 rounded-lg shadow-2xl transition-all duration-300",
                   'shadow-primary/40'
                 )}>
                   <div className="p-0">
