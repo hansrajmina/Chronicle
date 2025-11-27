@@ -157,7 +157,7 @@ export default function ChronicleLayout() {
         }
         if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
         if (result.rewrittenText) {
-          dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+          dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
         }
         if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
 
@@ -215,7 +215,7 @@ export default function ChronicleLayout() {
                 className="text-center md:text-left transition-opacity duration-500 md:w-1/3"
                 data-aos="fade-right"
             >
-                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-8xl md:text-9xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[8px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <Button onClick={state.isTextExpanded ? onRephrase : onContinueWriting} disabled={state.aiLoading || state.wordCount === 0} className="mt-6 px-12 transition-transform transform hover:scale-105">
                     {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
@@ -231,7 +231,7 @@ export default function ChronicleLayout() {
             >
                 <div className={cn(
                   "w-full bg-card/50 backdrop-blur-sm border rounded-lg shadow-2xl transition-all duration-300 shadow-primary/20",
-                  state.aiLoading && 'shadow-primary/40'
+                  state.aiLoading ? 'shadow-primary/40' : 'shadow-primary/20'
                 )}>
                   <div className="p-0">
                     <MainEditor
