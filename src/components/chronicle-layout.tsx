@@ -138,7 +138,7 @@ export default function ChronicleLayout() {
     try {
       const result = await apiFn(payload);
       
-      if (isRephrase && result.rewrittenText) {
+      if (isRephrase) {
         dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
         toast({ title: "Success", description: successMsg });
       } else {
@@ -184,7 +184,7 @@ export default function ChronicleLayout() {
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
-  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.', style === 'Formal');
+  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
   const onRephrase = () => {
@@ -215,7 +215,7 @@ export default function ChronicleLayout() {
                 className="text-center md:text-left transition-opacity duration-500 md:w-1/4"
                 data-aos="fade-right"
             >
-                <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[8px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <Button onClick={state.isTextExpanded ? onRephrase : onContinueWriting} disabled={state.aiLoading || state.wordCount === 0} className="mt-6 px-12 transition-transform transform hover:scale-105">
                     {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
