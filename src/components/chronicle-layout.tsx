@@ -238,10 +238,10 @@ export default function ChronicleLayout() {
                 className={cn("flex flex-col justify-center text-left transition-all duration-500", !hasContent && "aos-init")}
                 data-aos={!hasContent ? "fade-right" : undefined}
             >
-                <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", hasContent ? "text-3xl md:text-4xl text-center mb-8" : "text-4xl md:text-5xl lg:text-6xl")}>
+                <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
                     THE FUTURE OF WRITING IS HERE
                 </h1>
-                <p className={cn("mt-4 text-muted-foreground", hasContent ? "text-center" : "")}>
+                <p className={cn("mt-2 text-muted-foreground", hasContent ? "text-center mb-8" : "")}>
                     Chronicle AI helps you write faster, smarter, and better.
                 </p>
             </section>
