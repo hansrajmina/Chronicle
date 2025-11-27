@@ -68,7 +68,6 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 
 export default function ChronicleLayout() {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [activeTab, setActiveTab] = useState<string | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export default function ChronicleLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body feather-cursor p-4 sm:p-6 md:p-8 flex flex-col">
-      <TopIsland state={state} dispatch={dispatch} actions={actions} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TopIsland state={state} dispatch={dispatch} actions={actions} />
       
       <main className="flex-grow flex flex-col justify-center items-center pt-24 md:pt-32 lg:pt-40">
         <div className={layoutClasses} data-aos="fade-up">

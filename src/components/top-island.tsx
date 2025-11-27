@@ -1,17 +1,17 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Feather, Type, Spline, Paintbrush, Languages, Sparkles } from 'lucide-react';
+import { Download, Feather, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import AITools from './ai-tools';
 
 
-export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void }) {
-  
+export default function TopIsland({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
   const handleExportPdf = () => {
     const editorNode = document.getElementById('editor');
     if (editorNode) {
@@ -86,15 +86,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         )
     };
 
-    if (['rewrite', 'style', 'humanize', 'expand', 'translate'].includes(activeTab)) {
-        return (
-            <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
-                <AITools activeTab={activeTab} state={state} dispatch={dispatch} />
-            </div>
-        );
-    }
-
-
     return (
         <div className="p-4 mt-2 bg-card/80 backdrop-blur-sm rounded-lg border border-primary/20">
             {contentMap[activeTab]}
@@ -112,11 +103,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
           </h1>
         </div>
         <div className="flex items-center gap-0.5 sm:gap-2">
-            <TabButton value="rewrite" disabled={!state.selectedText}><Spline className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="style" disabled={!state.selectedText}><Paintbrush className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="humanize" disabled={!state.selectedText}><Feather className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="expand" disabled={!state.hasContent}><Sparkles className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="translate" disabled={!state.selectedText}><Languages className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
             <TabButton value="font"><Type className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
             <TabButton value="download" disabled={state.wordCount === 0}><Download className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
         </div>
