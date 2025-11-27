@@ -249,7 +249,8 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                     "w-full transition-all duration-500 aos-init relative",
-                    !hasContent && "md:col-span-1"
+                    !hasContent && "md:col-span-1",
+                    hasContent && "col-span-2"
                 )}
                 data-aos={!hasContent ? "fade-left" : ""}
                 data-aos-delay="200"
@@ -288,3 +289,4 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+    
