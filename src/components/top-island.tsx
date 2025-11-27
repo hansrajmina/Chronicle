@@ -60,7 +60,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
       onClick={() => !disabled && setActiveTab(value)}
       disabled={disabled}
       className={cn(
-        "p-2 sm:p-2.5 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
+        "p-2 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
         activeTab === value ? "bg-accent" : ""
       )}
       aria-label={value}
@@ -186,10 +186,10 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm sm:max-w-xl md:max-w-4xl lg:max-w-6xl px-4">
-      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 sm:p-3 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
+      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex items-center justify-start flex-1">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 uppercase whitespace-nowrap mr-4 sm:mr-8">
-              <Feather className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-primary" />
+              <Feather className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               <span className="hidden sm:inline">CHRONICLE AI</span>
           </h1>
         </div>
