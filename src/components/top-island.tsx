@@ -19,6 +19,7 @@ type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Ur
 export default function TopIsland({ state, dispatch, actions, activeTab, setActiveTab }: { state: any, dispatch: any, actions: any, activeTab: string | null, setActiveTab: (tab: string | null) => void }) {
   const [language, setLanguage] = React.useState<IndianLanguage>('Hindi');
   const [rewriteLength, setRewriteLength] = React.useState<number>(100);
+  const [writingStyle, setWritingStyle] = React.useState<WritingStyle>('Formal');
   
   const handleExportPdf = () => {
     const editorNode = document.getElementById('editor');
@@ -142,6 +143,27 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </div>
             </>
         ),
+        style: (
+            <>
+            <p className="text-sm text-muted-foreground mb-4 text-center">Change the style of the selected text.</p>
+            <div className="flex gap-4 justify-center">
+                <Select value={writingStyle} onValueChange={(v: WritingStyle) => setWritingStyle(v)}>
+                    <SelectTrigger className="bg-secondary w-48">
+                        <SelectValue placeholder="Select Style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {WritingStyleSchema.options.map(style => (
+                            <SelectItem key={style} value={style}>{style}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Button onClick={() => { actions.onChangeStyle(state.selectedText, writingStyle); setActiveTab(null); }} disabled={!state.selectedText || state.aiLoading} className="w-48 transition-transform transform hover:scale-105">
+                    {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
+                    Change Style
+                </Button>
+            </div>
+            </>
+        ),
         'view-text': (
             (state.aiResult) ? (
                 <div>
@@ -174,44 +196,19 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
         </div>
         <div className="flex items-center gap-0.5 sm:gap-2">
             <TabButton value="font"><Type className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  disabled={!state.selectedText || state.aiLoading}
-                  className={cn(
-                    "p-2 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow"
-                  )}
-                  aria-label="style"
-                >
-                  {state.aiLoading && activeTab === 'style' ? <Loader2 className="animate-spin w-4 h-4 sm:w-5 md:w-6" /> : <Brush className="w-4 h-4 sm:w-5 md:w-6"/>}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {WritingStyleSchema.options.map(style => (
-                  <DropdownMenuItem 
-                    key={style}
-                    onClick={() => {
-                        setActiveTab('style');
-                        actions.onChangeStyle(state.selectedText, style as WritingStyle);
-                    }}
-                  >
-                    {style}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <TabButton value="humanizer"><Feather className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="language"><Languages className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
-            <TabButton value="rewrite"><PencilRuler className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="style" disabled={!state.selectedText}><Brush className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="humanizer" disabled={!state.selectedText}><Feather className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="language" disabled={!state.selectedText}><Languages className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="rewrite" disabled={!state.selectedText}><PencilRuler className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
             <TabButton value="view-text"><History className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
             <TabButton value="download" disabled={state.wordCount === 0}><Download className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
         </div>
       </div>
-      <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab && activeTab !== 'style' ? 'max-h-96' : 'max-h-0')}>
+      <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab && activeTab !== 'style' ? 'max-h-96' : 'max-h-0', activeTab === 'style' && 'max-h-96' )}>
         {renderTabContent()}
       </div>
     </div>
   )
 }
+
+    
