@@ -24,7 +24,7 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     const editorNode = document.getElementById('editor');
     if (editorNode) {
       const contentNode = editorNode.querySelector('#editor-content') as HTMLElement;
-      const statsNode = editorNode.querySelector('.absolute.bottom-4.right-4') as HTMLElement;
+      const statsNode = editorNode.querySelector('.absolute.bottom-4.left-4') as HTMLElement;
       const placeholderNode = editorNode.querySelector('.pointer-events-none') as HTMLElement;
 
       // Temporarily modify styles for capture
