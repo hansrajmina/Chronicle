@@ -73,5 +73,6 @@
 
 .ai-text-fade-in {
   display: inline-block;
-  animation: fadeInAndUp 0.5s ease-out;
+  animation: fadeInAndUp 0.5s ease-out forwards;
+  opacity: 0;
 }
