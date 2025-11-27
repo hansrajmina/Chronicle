@@ -128,6 +128,34 @@ export default function ChronicleLayout() {
       });
     }
   }, []);
+
+  const onContinueWriting = useCallback(() => {
+    handleApiCall(expandTextWithAI, { text: state.editorContent.replace(/<[^>]*>/g, ' ').trim() }, 'Text expanded successfully.');
+  }, [state.editorContent]);
+  
+  const onRephrase = useCallback(() => {
+    handleApiCall(changeWritingStyle, { text: state.editorContent, style: 'Casual' }, 'Text rephrased successfully.', true);
+  }, [state.editorContent]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'Enter') {
+        event.preventDefault();
+        if (state.aiLoading || state.wordCount === 0) return;
+        
+        if (state.isTextExpanded) {
+          onRephrase();
+        } else {
+          onContinueWriting();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [state.aiLoading, state.wordCount, state.isTextExpanded, onContinueWriting, onRephrase]);
   
   const handleContentChange = useCallback((content: string) => {
     dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
@@ -184,19 +212,12 @@ export default function ChronicleLayout() {
     }
   };
 
-  const onContinueWriting = () => {
-    handleApiCall(expandTextWithAI, { text: state.editorContent.replace(/<[^>]*>/g, ' ').trim() }, 'Text expanded successfully.');
-  };
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
   const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
-
-  const onRephrase = () => {
-    handleApiCall(changeWritingStyle, { text: state.editorContent, style: 'Casual' }, 'Text rephrased successfully.', true);
-  };
 
   const handleEditorClick = () => {
     if (activeTabState !== null) {
@@ -219,10 +240,10 @@ export default function ChronicleLayout() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
         <div className="w-full flex items-center justify-center gap-8 md:flex-row flex-col">
             <section 
-                className="text-center md:text-left transition-opacity duration-500 md:w-1/4"
+                className="text-center md:text-left transition-opacity duration-500 md:w-1/5 aos-init"
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-[8px] text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <Button 
                     onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
@@ -236,13 +257,13 @@ export default function ChronicleLayout() {
             </section>
 
             <section 
-                className="w-full transition-all duration-500 md:w-3/4"
+                className="w-full transition-all duration-500 md:w-4/5 aos-init"
                 data-aos="fade-left" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}
             >
                 <div className={cn(
-                  "w-full bg-card/50 backdrop-blur-sm border-4 rounded-lg shadow-2xl transition-all duration-300",
+                  "w-full bg-card/50 backdrop-blur-sm border-8 rounded-lg shadow-2xl transition-all duration-300",
                   'shadow-primary/40'
                 )}>
                   <div className="p-0">
