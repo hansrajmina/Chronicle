@@ -78,36 +78,36 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                 Start writing your masterpiece...
             </div>
         )}
-        <div className="absolute bottom-4 left-4 flex items-center gap-4 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
-            <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                <span>{wordCount} words</span>
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
+                <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    <span>{wordCount} words</span>
+                </div>
+                {readingTime > 0 && (
+                  <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <span>{readingTime} min read</span>
+                  </div>
+                )}
             </div>
-            {readingTime > 0 && (
-              <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{readingTime} min read</span>
-              </div>
+
+            {!isEmpty && (
+                <Button 
+                    onClick={actions.onExpandText} 
+                    disabled={state.isAiLoading}
+                    size="sm"
+                    className="rounded-full shadow-lg shadow-primary/20 tab-glow"
+                >
+                    {state.isAiLoading ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Wand2 className="w-4 h-4" />
+                    )}
+                    <span className="ml-2">Continue writing</span>
+                </Button>
             )}
         </div>
-
-        {!isEmpty && (
-          <div className="absolute bottom-4 right-4">
-            <Button 
-                onClick={actions.onExpandText} 
-                disabled={state.isAiLoading}
-                size="sm"
-                className="rounded-full shadow-lg shadow-primary/20 tab-glow"
-            >
-                {state.isAiLoading ? (
-                    <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                    <Wand2 className="w-4 h-4" />
-                )}
-                <span className="ml-2">Continue writing</span>
-            </Button>
-          </div>
-        )}
     </div>
   );
 });
