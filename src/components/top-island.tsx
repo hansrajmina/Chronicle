@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Brush, Download, Feather, History, Languages, Loader2, PencilRuler, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { type WritingStyle } from '@/ai/schemas';
+import { type WritingStyle } from '@/ai/flows/change-writing-style';
 
 
 type IndianLanguage = 'Hindi' | 'Tamil' | 'Bengali' | 'Telugu' | 'Marathi' | 'Urdu';
