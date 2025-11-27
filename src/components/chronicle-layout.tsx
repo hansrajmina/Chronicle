@@ -238,33 +238,19 @@ export default function ChronicleLayout() {
         setActiveTab={setActiveTab}
       />
       
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
-        <div className="w-full flex items-center justify-center gap-8 md:flex-row flex-col">
-            {!hasContent && (
-              <section 
-                  className="text-center md:text-left transition-all duration-500 aos-init w-full md:w-2/5"
-                  data-aos="fade-right"
-              >
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
-                  <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
-                  <Button 
-                      onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
-                      disabled={state.aiLoading || state.wordCount === 0} 
-                      size="lg"
-                      className="mt-6 px-12 py-6 text-lg transition-transform transform hover:scale-105 shadow-[0_0_20px_4px] shadow-primary/30 hover:shadow-primary/50"
-                  >
-                      {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
-                      {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
-                  </Button>
-              </section>
-            )}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
+        <div className="w-full text-center">
+            <section 
+                className="text-center transition-all duration-500 aos-init w-full mb-8"
+                data-aos="fade-down"
+            >
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+            </section>
 
             <section 
-                className={cn(
-                  "w-full transition-all duration-500 aos-init",
-                  hasContent ? "md:w-full" : "md:w-3/5"
-                )}
-                data-aos="fade-left" 
+                className="w-full transition-all duration-500 aos-init"
+                data-aos="fade-up" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}
             >
@@ -282,12 +268,23 @@ export default function ChronicleLayout() {
                     />
                   </div>
                 </div>
-                
             </section>
         </div>
       </main>
+
+       {hasContent && (
+        <div className="fixed bottom-8 right-8 z-10">
+          <Button 
+            onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
+            disabled={state.aiLoading} 
+            size="lg"
+            className="px-12 py-6 text-lg transition-transform transform hover:scale-105 shadow-[0_0_20px_4px] shadow-primary/30 hover:shadow-primary/50"
+          >
+            {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
+            {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
-
-    
