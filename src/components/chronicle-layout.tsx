@@ -29,7 +29,6 @@ type AppState = {
   wordGoal: number;
   aiLoading: boolean;
   aiResult: string;
-  references: string[];
   font: 'inter' | 'lora' | 'mono';
   isTextExpanded: boolean;
 };
@@ -41,7 +40,6 @@ type AppAction =
   | { type: 'SET_WORD_GOAL'; payload: number }
   | { type: 'SET_AI_LOADING'; payload: boolean }
   | { type: 'SET_AI_RESULT'; payload: string }
-  | { type: 'SET_REFERENCES'; payload: string[] }
   | { type: 'APPEND_EDITOR_CONTENT'; payload: string }
   | { type: 'SET_FONT'; payload: 'inter' | 'lora' | 'mono' }
   | { type: 'SET_IS_TEXT_EXPANDED'; payload: boolean };
@@ -54,7 +52,6 @@ const initialState: AppState = {
   wordGoal: 500,
   aiLoading: false,
   aiResult: '',
-  references: [],
   font: 'inter',
   isTextExpanded: false,
 };
@@ -87,10 +84,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, aiLoading: action.payload };
     case 'SET_AI_RESULT':
       setActiveTab('view-text');
-      return { ...state, aiResult: action.payload, references: [] };
-    case 'SET_REFERENCES':
-      setActiveTab('view-text');
-      return { ...state, references: action.payload, aiResult: '' };
+      return { ...state, aiResult: action.payload };
     case 'SET_FONT':
       return { ...state, font: action.payload };
     case 'SET_IS_TEXT_EXPANDED':
@@ -195,8 +189,7 @@ export default function ChronicleLayout() {
         if (result.rewrittenText) {
           dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
         }
-        if (result.references) dispatch({ type: 'SET_REFERENCES', payload: result.references });
-
+        
         if (!result.expandedText) {
             setActiveTabState('view-text');
         } else {
@@ -207,7 +200,6 @@ export default function ChronicleLayout() {
       console.error(error);
       toast({ variant: "destructive", title: "AI Error", description: "Could not process request." });
       dispatch({ type: 'SET_AI_RESULT', payload: '' });
-      dispatch({ type: 'SET_REFERENCES', payload: [] });
     } finally {
       dispatch({ type: 'SET_AI_LOADING', payload: false });
     }
@@ -216,7 +208,6 @@ export default function ChronicleLayout() {
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
-  const onGetReferences = (text: string) => {};
   const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
@@ -226,7 +217,7 @@ export default function ChronicleLayout() {
     }
   };
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle, onGetReferences };
+  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
@@ -238,18 +229,30 @@ export default function ChronicleLayout() {
         setActiveTab={setActiveTab}
       />
       
-      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
+      <main className={cn(
+          "flex-1 flex flex-col items-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32 transition-all duration-500",
+          hasContent ? 'justify-start' : 'justify-center'
+      )}>
         <div className="w-full text-center">
             <section 
-                className="text-center transition-all duration-500 aos-init w-full mb-8"
+                className={cn(
+                    "text-center transition-all duration-500 aos-init w-full",
+                    hasContent ? 'mb-8' : 'mb-8'
+                )}
                 data-aos="fade-down"
             >
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
-                <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
+                <p className={cn(
+                    "mt-4 text-xs text-muted-foreground transition-opacity duration-500",
+                    hasContent ? 'opacity-0 h-0' : 'opacity-100'
+                )}>Chronicle AI helps you write faster, smarter, and better.</p>
             </section>
 
             <section 
-                className="w-full transition-all duration-500 aos-init"
+                className={cn(
+                    "w-full transition-all duration-500 aos-init",
+                    hasContent ? 'max-w-4xl mx-auto' : 'max-w-2xl mx-auto'
+                )}
                 data-aos="fade-up" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BookCheck, Brush, Download, Feather, History, Languages, Loader2, PencilRuler, Type } from 'lucide-react';
+import { Brush, Download, Feather, History, Languages, Loader2, PencilRuler, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { z } from 'zod';
 
@@ -57,7 +57,14 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
 
   const TabButton = ({ value, children, disabled }: { value: string, children: React.ReactNode, disabled?: boolean }) => (
     <button
-      onClick={() => !disabled && setActiveTab(value)}
+      onClick={() => {
+        if(value === 'download') {
+            handleExportPdf();
+            setActiveTab(null);
+        } else if (!disabled) {
+            setActiveTab(value)
+        }
+      }}
       disabled={disabled}
       className={cn(
         "p-2 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
@@ -159,20 +166,15 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </>
         ),
         'view-text': (
-            (state.aiResult || state.references.length > 0) ? (
+            (state.aiResult) ? (
                 <div>
                     <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2 text-center">AI Result</h4>
                     <ScrollArea className="h-24 w-full rounded-md border p-2 bg-secondary">
                         {state.aiResult && <p className="text-sm">{state.aiResult}</p>}
-                        {state.references.length > 0 && (
-                            <ul className="space-y-2 text-sm list-disc list-inside">
-                                {state.references.map((ref: string, i: number) => <li key={i}>{ref}</li>)}
-                            </ul>
-                        )}
                     </ScrollArea>
                 </div>
             ) : (
-                <p className="text-sm text-muted-foreground text-center">No AI generated text or references to show yet. Use one of the AI tools!</p>
+                <p className="text-sm text-muted-foreground text-center">No AI generated text to show yet. Use one of the AI tools!</p>
             )
         )
     };
@@ -185,22 +187,22 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm sm:max-w-xl md:max-w-4xl lg:max-w-6xl px-4">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-[calc(100%-2rem)] sm:max-w-xl md:max-w-4xl lg:max-w-6xl px-0 sm:px-4">
       <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex items-center justify-start flex-1">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 uppercase whitespace-nowrap mr-4 sm:mr-8">
-              <Feather className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+          <h1 className="text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 uppercase whitespace-nowrap mr-2 sm:mr-8">
+              <Feather className="w-5 h-5 sm:w-6 md:w-8 md:h-8 text-primary" />
               <span className="hidden sm:inline">CHRONICLE AI</span>
           </h1>
         </div>
-        <div className="flex items-center gap-1 sm:gap-2">
-            <TabButton value="font"><Type className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="style"><Brush className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="humanizer"><Feather className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="language"><Languages className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="rewrite"><PencilRuler className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="view-text"><History className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
-            <TabButton value="download"><Download className="w-5 h-5 sm:w-6 md:w-7"/></TabButton>
+        <div className="flex items-center gap-0.5 sm:gap-2">
+            <TabButton value="font"><Type className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="style"><Brush className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="humanizer"><Feather className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="language"><Languages className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="rewrite"><PencilRuler className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="view-text"><History className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="download" disabled={state.wordCount === 0}><Download className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
