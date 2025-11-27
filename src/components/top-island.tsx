@@ -185,22 +185,22 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-4">
-      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-3 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm sm:max-w-xl md:max-w-4xl lg:max-w-6xl px-4">
+      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 sm:p-3 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex items-center justify-start flex-1">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground flex items-center gap-4 pl-4 uppercase whitespace-nowrap mr-8">
-              <Feather className="w-12 h-12 md:w-16 md:h-16 text-primary" />
-              CHRONICLE AI
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight text-foreground flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 uppercase whitespace-nowrap mr-4 sm:mr-8">
+              <Feather className="w-6 h-6 sm:w-8 sm:h-8 md:w-16 md:h-16 text-primary" />
+              <span className="hidden sm:inline">CHRONICLE AI</span>
           </h1>
         </div>
-        <div className="flex items-center gap-2">
-            <TabButton value="font"><Type className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="style"><Brush className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="humanizer"><Feather className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="language"><Languages className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="rewrite"><PencilRuler className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="view-text"><History className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="download"><Download className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
+        <div className="flex items-center gap-1 sm:gap-2">
+            <TabButton value="font"><Type className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="style"><Brush className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="humanizer"><Feather className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="language"><Languages className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="rewrite"><PencilRuler className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="view-text"><History className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
+            <TabButton value="download"><Download className="w-6 h-6 md:w-8 md:h-8"/></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
