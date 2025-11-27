@@ -5,6 +5,7 @@ import MainEditor from '@/components/main-editor';
 import TopIsland from '@/components/top-island';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
 
 declare global {
     interface Window {
@@ -94,8 +95,46 @@ export default function ChronicleLayout() {
     }
   }, []);
 
+  const handleExpandText = async () => {
+    if (state.isAiLoading) return;
+    dispatch({ type: 'SET_AI_LOADING', payload: true });
+
+    try {
+        const textToExpand = state.editorContent.replace(/<[^>]*>/g, ' ').trim();
+        const result = await expandTextWithAI({ text: textToExpand });
+        
+        const newContent = `${state.editorContent} ${result.expandedText}`;
+        dispatch({ type: 'SET_EDITOR_CONTENT', payload: newContent });
+
+        // Move cursor to the end
+        setTimeout(() => {
+            const editorNode = editorRef.current?.querySelector('#editor-content');
+            if(editorNode) {
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(editorNode);
+                range.collapse(false);
+                sel?.removeAllRanges();
+                sel?.addRange(range);
+            }
+        }, 0)
+
+
+    } catch (error) {
+        console.error('Error expanding text:', error);
+        toast({
+            variant: "destructive",
+            title: "AI Error",
+            description: "Could not expand the text. Please try again.",
+        });
+    } finally {
+        dispatch({ type: 'SET_AI_LOADING', payload: false });
+    }
+  };
+
   const actions = {
     onSetFont: (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font }),
+    onExpandText: handleExpandText,
   };
   
   const layoutClasses = state.hasContent ? 
@@ -125,6 +164,8 @@ export default function ChronicleLayout() {
                 onContentChange={handleContentChange}
                 onSelectionChange={handleSelectionChange}
                 font={state.font}
+                actions={actions}
+                state={state}
               />
             </div>
         </div>

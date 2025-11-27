@@ -2,13 +2,20 @@
 
 import React, { useRef, useEffect, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Clock, FileText } from 'lucide-react';
+import { Clock, FileText, Wand2, Loader } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface MainEditorProps {
   content: string;
   font: 'inter' | 'lora' | 'mono';
   onContentChange: (content: string) => void;
   onSelectionChange: () => void;
+  actions: {
+    onExpandText: () => void;
+  },
+  state: {
+    isAiLoading: boolean;
+  }
 }
 
 const fontClasses = {
@@ -18,7 +25,7 @@ const fontClasses = {
 }
 
 const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
-  ({ content, onContentChange, onSelectionChange, font }, ref) => {
+  ({ content, onContentChange, onSelectionChange, font, actions, state }, ref) => {
   const localRef = useRef<HTMLDivElement>(null);
   const internalRef = (ref || localRef) as React.RefObject<HTMLDivElement>;
 
@@ -83,6 +90,24 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
               </div>
             )}
         </div>
+
+        {!isEmpty && (
+          <div className="absolute bottom-4 right-4">
+            <Button 
+                onClick={actions.onExpandText} 
+                disabled={state.isAiLoading}
+                size="sm"
+                className="rounded-full shadow-lg shadow-primary/20 tab-glow"
+            >
+                {state.isAiLoading ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                    <Wand2 className="w-4 h-4" />
+                )}
+                <span className="ml-2">Continue writing</span>
+            </Button>
+          </div>
+        )}
     </div>
   );
 });
