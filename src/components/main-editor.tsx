@@ -7,7 +7,7 @@ import { Clock, FileText } from 'lucide-react';
 interface MainEditorProps {
   content: string;
   font: 'inter' | 'lora' | 'mono';
-  onContentChange: (content: string, hasContent: boolean) => void;
+  onContentChange: (content: string) => void;
   onSelectionChange: () => void;
 }
 
@@ -22,9 +22,6 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   const localRef = useRef<HTMLDivElement>(null);
   const internalRef = (ref || localRef) as React.RefObject<HTMLDivElement>;
 
-  const wordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-  const readingTime = Math.ceil(wordCount / 200);
-
   const checkIsEmpty = (htmlContent: string) => {
     if (!htmlContent) return true;
     const strippedContent = htmlContent.replace(/<[^>]*>/g, '').trim();
@@ -35,6 +32,9 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   };
   
   const isEmpty = checkIsEmpty(content);
+  const wordCount = isEmpty ? 0 : content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  const readingTime = Math.ceil(wordCount / 200);
+
 
   useEffect(() => {
     const editorNode = internalRef.current?.querySelector('#editor-content');
@@ -45,7 +45,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     const currentContent = e.currentTarget.innerHTML;
-    onContentChange(currentContent, !checkIsEmpty(currentContent));
+    onContentChange(currentContent);
   };
   
 

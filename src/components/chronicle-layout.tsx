@@ -35,7 +35,7 @@ type AppState = {
 };
 
 type AppAction =
-  | { type: 'SET_EDITOR_CONTENT'; payload: { content: string, hasContent: boolean } }
+  | { type: 'SET_EDITOR_CONTENT'; payload: string }
   | { type: 'SET_REPHRASED_CONTENT'; payload: string }
   | { type: 'SET_SELECTED_TEXT'; payload: string }
   | { type: 'SET_WORD_GOAL'; payload: number }
@@ -69,12 +69,14 @@ const checkIsEmpty = (htmlContent: string) => {
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
-    case 'SET_EDITOR_CONTENT':
-      const { content, hasContent } = action.payload;
-      const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+    case 'SET_EDITOR_CONTENT': {
+      const content = action.payload;
+      const hasContent = !checkIsEmpty(content);
+      const newWordCount = hasContent ? content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length : 0;
       const readingTime = Math.ceil(newWordCount / 200);
       return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false, hasContent };
-    case 'APPEND_EDITOR_CONTENT':
+    }
+    case 'APPEND_EDITOR_CONTENT': {
         const lastChar = state.editorContent.replace(/<[^>]*>/g, '').slice(-1);
         const separator = (lastChar === '' || lastChar === ' ' || lastChar === '.' || lastChar === ',') ? '' : ' ';
         const animatedText = action.payload.split(' ').map((word, index) => `<span class="ai-text-fade-in" style="animation-delay: ${index * 50}ms;">${word}</span>`).join(' ');
@@ -82,12 +84,14 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
         const appendedReadingTime = Math.ceil(appendedWordCount / 200);
         return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true, hasContent: true };
-    case 'SET_REPHRASED_CONTENT':
+    }
+    case 'SET_REPHRASED_CONTENT': {
         const rephrasedContent = action.payload;
-        const rephrasedIsNotEmpty = !checkIsEmpty(rephrasedContent);
-        const rephrasedWordCount = rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+        const hasContent = !checkIsEmpty(rephrasedContent);
+        const rephrasedWordCount = hasContent ? rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length : 0;
         const rephrasedReadingTime = Math.ceil(rephrasedWordCount / 200);
-        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent: rephrasedIsNotEmpty };
+        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent };
+    }
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -162,8 +166,8 @@ export default function ChronicleLayout() {
     };
   }, [state.aiLoading, state.wordCount, state.isTextExpanded, onContinueWriting, onRephrase]);
   
-  const handleContentChange = useCallback((content: string, hasContent: boolean) => {
-    dispatch({ type: 'SET_EDITOR_CONTENT', payload: { content, hasContent } });
+  const handleContentChange = useCallback((content: string) => {
+    dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
   }, []);
 
   const handleSelectionChange = useCallback(() => {
@@ -241,7 +245,7 @@ export default function ChronicleLayout() {
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className={cn(
-            "w-full max-w-6xl mx-auto transition-all duration-500",
+            "w-full max-w-4xl mx-auto transition-all duration-500",
             state.hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-5 gap-8 items-center'
         )}>
              <section
@@ -255,7 +259,7 @@ export default function ChronicleLayout() {
                 <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", state.hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
                     THE FUTURE OF WRITING IS HERE
                 </h1>
-                <p className={cn("text-muted-foreground", state.hasContent ? "text-center mb-8" : "mt-1")}>
+                <p className={cn("text-muted-foreground", state.hasContent ? "text-center mb-8" : "mt-0")}>
                     Chronicle AI helps you write faster, smarter, and better.
                 </p>
             </section>
