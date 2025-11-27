@@ -71,10 +71,10 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_EDITOR_CONTENT': {
       const content = action.payload;
-      const hasContent = !checkIsEmpty(content);
-      const newWordCount = hasContent ? content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length : 0;
+      const isEmpty = checkIsEmpty(content);
+      const newWordCount = isEmpty ? 0 : content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
       const readingTime = Math.ceil(newWordCount / 200);
-      return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false, hasContent };
+      return { ...state, editorContent: content, wordCount: newWordCount, readingTime, hasContent: !isEmpty, isTextExpanded: false };
     }
     case 'APPEND_EDITOR_CONTENT': {
         const lastChar = state.editorContent.replace(/<[^>]*>/g, '').slice(-1);
@@ -86,11 +86,10 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true, hasContent: true };
     }
     case 'SET_REPHRASED_CONTENT': {
-        const rephrasedContent = action.payload;
-        const hasContent = !checkIsEmpty(rephrasedContent);
-        const rephrasedWordCount = hasContent ? rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length : 0;
-        const rephrasedReadingTime = Math.ceil(rephrasedWordCount / 200);
-        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent };
+        const content = action.payload;
+        const newWordCount = checkIsEmpty(content) ? 0 : content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+        const newReadingTime = Math.ceil(newWordCount / 200);
+        return { ...state, editorContent: content, wordCount: newWordCount, readingTime: newReadingTime, hasContent: !checkIsEmpty(content) };
     }
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
@@ -99,8 +98,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_AI_LOADING':
       return { ...state, aiLoading: action.payload };
     case 'SET_AI_RESULT':
-      setActiveTab('view-text');
-      return { ...state, aiResult: action.payload };
+        return { ...state, aiResult: action.payload };
     case 'SET_FONT':
       return { ...state, font: action.payload };
     case 'SET_IS_TEXT_EXPANDED':
@@ -110,201 +108,174 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   }
 };
 
-let setActiveTab: (tab: string | null) => void;
 
 export default function ChronicleLayout() {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [activeTabState, setActiveTabState] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
-
-  setActiveTab = (tab) => {
-    if (activeTabState === tab) {
-      setActiveTabState(null);
-    } else {
-      setActiveTabState(tab);
-    }
-  };
-
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.AOS) {
-      window.AOS.init({
-        once: true,
-        disable: 'phone',
-        duration: 500,
-        easing: 'ease-out-cubic',
-      });
-    }
+    window.AOS && window.AOS.init({ once: true });
   }, []);
 
-  const onContinueWriting = useCallback(() => {
-    handleApiCall(expandTextWithAI, { text: state.editorContent.replace(/<[^>]*>/g, ' ').trim() }, 'Text expanded successfully.');
-  }, [state.editorContent]);
-  
-  const onRephrase = useCallback(() => {
-    handleApiCall(changeWritingStyle, { text: state.editorContent, style: 'Casual' }, 'Text rephrased successfully.', true);
-  }, [state.editorContent]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === 'Enter') {
-        event.preventDefault();
-        if (state.aiLoading || state.wordCount === 0) return;
-        
-        if (state.isTextExpanded) {
-          onRephrase();
-        } else {
-          onContinueWriting();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [state.aiLoading, state.wordCount, state.isTextExpanded, onContinueWriting, onRephrase]);
-  
   const handleContentChange = useCallback((content: string) => {
     dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
   }, []);
 
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
-    if (selection && selection.toString()) {
-      dispatch({ type: 'SET_SELECTED_TEXT', payload: selection?.toString() || '' });
+    if (selection && selection.toString().length > 0) {
+      dispatch({ type: 'SET_SELECTED_TEXT', payload: selection.toString() });
+    } else {
+      dispatch({ type: 'SET_SELECTED_TEXT', payload: '' });
     }
   }, []);
 
-  const handleApiCall = async (apiFn: Function, payload: any, successMsg: string, isRephrase = false) => {
+  const handleHumanizeText = async (text: string) => {
+    if (!text) {
+        toast({ title: "No text selected", description: "Please select text to humanize." });
+        return;
+    }
     dispatch({ type: 'SET_AI_LOADING', payload: true });
     try {
-      const result = await apiFn(payload);
-      
-      if (isRephrase) {
-        dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
-        toast({ title: "Success", description: successMsg });
-      } else {
-        if (result.humanizedText) dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
-        if (result.expandedText) {
-            dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
-            if (editorRef.current) {
-              editorRef.current.focus();
-              const range = document.createRange();
-              const sel = window.getSelection();
-              range.selectNodeContents(editorRef.current);
-              range.collapse(false);
-              sel?.removeAllRanges();
-              sel?.addRange(range);
-            }
-        }
-        if (result.translatedText) dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
-        if (result.rewrittenText) {
-          dispatch({ type: 'SET_REPHRASED_CONTENT', payload: result.rewrittenText });
-        }
-        
-        if (!result.expandedText) {
-            setActiveTabState('view-text');
-        } else {
-          toast({ title: "Success", description: successMsg });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      toast({ variant: "destructive", title: "AI Error", description: "Could not process request." });
-      dispatch({ type: 'SET_AI_RESULT', payload: '' });
+        const result = await humanizeText({ text });
+        dispatch({ type: 'SET_AI_RESULT', payload: result.humanizedText });
+    } catch (e: any) {
+        toast({ variant: "destructive", title: "Error", description: e.message });
+    } finally {
+        dispatch({ type: 'SET_AI_LOADING', payload: false });
+    }
+  };
+
+  const handleExpandText = async () => {
+    const text = state.editorContent;
+    dispatch({ type: 'SET_AI_LOADING', payload: true });
+    try {
+      const result = await expandTextWithAI({ text: text.replace(/<[^>]*>/g, ' ') });
+      dispatch({ type: 'APPEND_EDITOR_CONTENT', payload: result.expandedText });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: "Error", description: e.message });
     } finally {
       dispatch({ type: 'SET_AI_LOADING', payload: false });
     }
   };
 
-  const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
-  const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
-  const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
-  const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
-  const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
+  const handleTranslate = async (text: string, language: IndianLanguage) => {
+    if (!text) {
+        toast({ title: "No text selected", description: "Please select text to translate." });
+        return;
+    }
+    dispatch({ type: 'SET_AI_LOADING', payload: true });
+    try {
+        const result = await translateToIndianLanguage({ text, language });
+        dispatch({ type: 'SET_AI_RESULT', payload: result.translatedText });
+    } catch (e: any) {
+        toast({ variant: "destructive", title: "Error", description: e.message });
+    } finally {
+        dispatch({ type: 'SET_AI_LOADING', payload: false });
+    }
+  }
 
-  const handleEditorClick = () => {
-    if (activeTabState !== null) {
-      setActiveTabState(null);
+  const handleRewrite = async (text: string, length: number) => {
+    if (!text) {
+        toast({ title: "No text selected", description: "Please select text to rewrite." });
+        return;
+    }
+    dispatch({ type: 'SET_AI_LOADING', payload: true });
+    try {
+        const result = await rewriteTextToLength({ text, length });
+        dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+    } catch (e: any) {
+        toast({ variant: "destructive", title: "Error", description: e.message });
+    } finally {
+        dispatch({ type: 'SET_AI_LOADING', payload: false });
+    }
+  }
+
+  const handleChangeStyle = async (text: string, style: WritingStyle) => {
+    if (!text) {
+        toast({ title: "No text selected", description: "Please select text to change its style." });
+        return;
+    }
+    dispatch({ type: 'SET_AI_LOADING', payload: true });
+    try {
+        const result = await changeWritingStyle({ text, style });
+        dispatch({ type: 'SET_AI_RESULT', payload: result.rewrittenText });
+    } catch (e: any) {
+        toast({ variant: "destructive", title: "Error", description: e.message });
+    } finally {
+        dispatch({ type: 'SET_AI_LOADING', payload: false });
     }
   };
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle };
+  const handleRephraseWithResult = () => {
+    const rephrasedText = state.aiResult;
+    const currentContent = state.editorContent;
+    const newContent = currentContent.replace(state.selectedText, rephrasedText);
+    dispatch({ type: 'SET_REPHRASED_CONTENT', payload: newContent });
+    dispatch({ type: 'SET_AI_RESULT', payload: ''});
+    dispatch({ type: 'SET_SELECTED_TEXT', payload: '' });
+    setActiveTab(null);
+  }
+
+  const actions = {
+    onSetFont: (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font }),
+    onHumanize: handleHumanizeText,
+    onExpand: handleExpandText,
+    onTranslate: handleTranslate,
+    onRewrite: handleRewrite,
+    onChangeStyle: handleChangeStyle,
+  };
+
+  const hasAIResultForSelection = state.aiResult && state.selectedText && state.aiResult.length > 0;
+  
+  const layoutClasses = state.isTextExpanded ? 
+    "w-full max-w-4xl mx-auto transition-all duration-500" :
+    "w-full max-w-6xl mx-auto transition-all duration-500 grid grid-cols-1 md:grid-cols-5 gap-8 items-center";
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
-      <TopIsland
-        state={state}
-        dispatch={dispatch}
-        actions={actions}
-        activeTab={activeTabState}
-        setActiveTab={setActiveTab}
-      />
+    <div className="min-h-screen bg-background text-foreground font-body feather-cursor p-4 sm:p-6 md:p-8 flex flex-col">
+      <TopIsland state={state} dispatch={dispatch} actions={actions} activeTab={activeTab} setActiveTab={setActiveTab} />
       
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
-        <div className={cn(
-            "w-full max-w-4xl mx-auto transition-all duration-500",
-            state.hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-5 gap-8 items-center'
-        )}>
-             <section
-                className={cn(
-                  "flex flex-col justify-center text-left transition-all duration-500", 
-                  state.hasContent && 'items-center',
-                  !state.hasContent && 'md:col-span-2'
-                )}
-                data-aos={!state.hasContent ? "fade-right" : undefined}
-            >
-                <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", state.hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
+      <main className="flex-grow flex flex-col justify-center items-center pt-24 md:pt-32 lg:pt-40">
+        <div className={layoutClasses} data-aos="fade-up">
+            {!state.isTextExpanded && (
+                <div className="md:col-span-2 text-center md:text-left flex flex-col items-center md:items-start" data-aos="fade-right" data-aos-delay="200">
+                    <h1 className="font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm text-4xl md:text-5xl lg:text-6xl">
                     THE FUTURE OF WRITING IS HERE
-                </h1>
-                <p className={cn("text-muted-foreground", state.hasContent ? "text-center mb-8" : "mt-0")}>
+                    </h1>
+                    <p className="mt-2 md:mt-4 text-muted-foreground max-w-md mx-auto md:mx-0">
                     Chronicle AI helps you write faster, smarter, and better.
-                </p>
-            </section>
-
-            <section 
-                className={cn(
-                    "w-full transition-all duration-500 relative",
-                    !state.hasContent && "md:col-span-3",
-                    state.hasContent && "w-full"
-                )}
-                data-aos={!state.hasContent ? "fade-left" : undefined}
-                data-aos-delay="200"
-                onClick={handleEditorClick}
-            >
-                <div className={cn(
-                  "w-full bg-card/50 backdrop-blur-sm border-8 rounded-lg shadow-2xl transition-all duration-300",
-                  'shadow-primary/40'
-                )}>
-                  <div className="p-0">
-                    <MainEditor
-                      ref={editorRef}
-                      font={state.font}
-                      content={state.editorContent}
-                      onContentChange={handleContentChange}
-                      onSelectionChange={handleSelectionChange}
-                    />
-                  </div>
+                    </p>
                 </div>
-                {state.hasContent && (
-                    <div className="absolute bottom-[-20px] right-4">
-                      <Button 
-                        onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
-                        disabled={state.aiLoading} 
-                        size="lg"
-                        className="transition-transform transform hover:scale-105 shadow-[0_0_20px_4px] shadow-primary/30 hover:shadow-primary/50"
-                      >
-                        {state.aiLoading ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
-                        {state.isTextExpanded ? 'Rephrase' : 'Continue Writing'}
-                      </Button>
-                    </div>
+            )}
+            <div className={cn("relative", state.isTextExpanded ? "w-full" : "md:col-span-3")}>
+              <MainEditor
+                ref={editorRef}
+                content={state.editorContent}
+                onContentChange={handleContentChange}
+                onSelectionChange={handleSelectionChange}
+                font={state.font}
+              />
+              <div className="absolute bottom-[-1rem] right-4 transform translate-y-full md:translate-y-0 md:bottom-4 md:right-4 z-10 flex gap-2">
+                {hasAIResultForSelection ? (
+                    <Button onClick={handleRephraseWithResult} disabled={state.aiLoading} className="transition-all transform hover:scale-105 shadow-lg shadow-primary/30">
+                        {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                        Rephrase
+                    </Button>
+                ) : (
+                  state.hasContent && (
+                        <Button onClick={handleExpandText} disabled={state.aiLoading} className="transition-all transform hover:scale-105 shadow-lg shadow-primary/30">
+                            {state.aiLoading ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                            Continue Writing
+                        </Button>
+                    )
                 )}
-            </section>
+              </div>
+            </div>
         </div>
       </main>
     </div>
   );
 }
-    
