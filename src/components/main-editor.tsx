@@ -59,7 +59,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                 Start writing your masterpiece...
             </div>
         )}
-        <div className="absolute bottom-4 right-4 flex items-center gap-4 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
+        <div className="absolute bottom-4 left-4 flex items-center gap-4 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full border">
             <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4" />
                 <span>{wordCount} words</span>
@@ -82,3 +82,4 @@ export default MainEditor;
     
 
     
+

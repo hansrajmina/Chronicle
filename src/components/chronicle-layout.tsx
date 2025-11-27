@@ -275,7 +275,7 @@ export default function ChronicleLayout() {
                   </div>
                 </div>
                 {hasContent && (
-                    <div className="absolute bottom-[-20px] right-4">
+                    <div className="absolute bottom-[-20px] left-4">
                       <Button 
                         onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
                         disabled={state.aiLoading} 
