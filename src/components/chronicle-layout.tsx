@@ -212,7 +212,7 @@ export default function ChronicleLayout() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
         <div className="w-full flex items-center justify-center gap-8 md:flex-row flex-col">
             <section 
-                className="text-center md:text-left transition-opacity duration-500 md:w-1/3"
+                className="text-center md:text-left transition-opacity duration-500 md:w-1/4"
                 data-aos="fade-right"
             >
                 <h1 className="text-8xl md:text-9xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
@@ -224,7 +224,7 @@ export default function ChronicleLayout() {
             </section>
 
             <section 
-                className="w-full transition-all duration-500 md:w-1/2"
+                className="w-full transition-all duration-500 md:w-3/4"
                 data-aos="fade-left" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}
