@@ -57,7 +57,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   
 
   return (
-    <div className='relative border rounded-lg border-primary/20' id="editor" ref={internalRef}>
+    <div className='relative border-2 rounded-lg border-primary/20' id="editor" ref={internalRef}>
         <div
             id="editor-content"
             contentEditable
@@ -104,7 +104,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                     ) : (
                         <Wand2 className="w-4 h-4" />
                     )}
-                    <span className="ml-1">Continue Writing</span>
+                    <span>Continue Writing</span>
                 </Button>
             )}
         </div>
