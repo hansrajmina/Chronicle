@@ -5,12 +5,6 @@ import MainEditor from '@/components/main-editor';
 import TopIsland from '@/components/top-island';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
-import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
-import { changeWritingStyle, type WritingStyle } from '@/ai/flows/change-writing-style';
-import { humanizeText } from '@/ai/flows/humanize-text';
-import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-language';
-import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 
 declare global {
     interface Window {
@@ -90,43 +84,6 @@ export default function ChronicleLayout() {
   const handleContentChange = useCallback((content: string) => {
     dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
   }, []);
-  
-  const insertContent = useCallback((newContent: string, atSelection: boolean) => {
-      const selection = window.getSelection();
-      const editorNode = editorRef.current?.querySelector('#editor-content');
-      if (!editorNode) return;
-  
-      if (atSelection && selection && selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          range.deleteContents();
-          
-          const newTextNode = document.createTextNode(newContent);
-          range.insertNode(newTextNode);
-          
-          range.setStartAfter(newTextNode);
-          range.setEndAfter(newText_node);
-          selection.removeAllRanges();
-          selection.addRange(range);
-      } else {
-        const currentContent = editorNode.innerHTML;
-        const separator = currentContent.endsWith(' ') || newContent.startsWith(' ') ? '' : ' ';
-        editorNode.innerHTML = currentContent + separator + newContent;
-      }
-      
-      handleContentChange(editorNode.innerHTML);
-      
-      // Animate the newly added text
-      const newNodes = Array.from(editorNode.childNodes).filter(node => node.nodeValue === newContent);
-      newNodes.forEach(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-              const wrapper = document.createElement('span');
-              wrapper.className = 'ai-text-fade-in';
-              node.parentNode?.insertBefore(wrapper, node);
-              wrapper.appendChild(node);
-          }
-      });
-  
-  }, [handleContentChange]);
 
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
@@ -137,39 +94,8 @@ export default function ChronicleLayout() {
     }
   }, []);
 
-  const handleAiAction = async (action: (text: string, options?: any) => Promise<any>, text: string, options: any, insertAtSelection: boolean) => {
-    dispatch({ type: 'SET_AI_LOADING', payload: true });
-    try {
-        const result = await action(text, options);
-        let newContent = '';
-
-        if(result.rewrittenText) newContent = result.rewrittenText;
-        if(result.expandedText) newContent = result.expandedText;
-        if(result.humanizedText) newContent = result.humanizedText;
-        if(result.translatedText) newContent = result.translatedText;
-        if(result.references) newContent = '\n\nReferences:\n' + result.references.join('\n');
-        
-        insertContent(newContent, insertAtSelection);
-    } catch (error) {
-        console.error('AI action failed:', error);
-        toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-            description: "There was a problem with the AI action.",
-        })
-    } finally {
-        dispatch({ type: 'SET_AI_LOADING', payload: false });
-    }
-  }
-
   const actions = {
     onSetFont: (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font }),
-    onContinue: () => handleAiAction(async (text) => expandTextWithAI({ text }), state.editorContent, {}, false),
-    onRewrite: (length: number) => handleAiAction(async (text, opts) => rewriteTextToLength({ text, length: opts.length }), state.selectedText, { length }, true),
-    onChangeStyle: (style: WritingStyle) => handleAiAction(async (text, opts) => changeWritingStyle({ text, style: opts.style }), state.selectedText, { style }, true),
-    onHumanize: () => handleAiAction(async (text) => humanizeText({ text }), state.selectedText, {}, true),
-    onTranslate: (language: any) => handleAiAction(async (text, opts) => translateToIndianLanguage({ text, language: opts.language }), state.selectedText, { language }, true),
-    onFetchReferences: () => handleAiAction(async (text) => fetchAcademicReferences({ text }), state.selectedText, {}, false),
   };
   
   const layoutClasses = state.hasContent ? 
