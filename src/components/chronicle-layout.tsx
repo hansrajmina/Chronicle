@@ -231,7 +231,7 @@ export default function ChronicleLayout() {
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className={cn(
-            "w-full max-w-[1200px] mx-auto transition-all duration-500",
+            "w-full max-w-6xl mx-auto transition-all duration-500",
             hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-2 gap-8 items-center'
         )}>
             <section
@@ -249,7 +249,7 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                     "w-full transition-all duration-500 relative",
-                    !hasContent && "md:col-span-1 aos-init",
+                    !hasContent && "md:col-span-1",
                     hasContent && "w-full"
                 )}
                 data-aos={!hasContent ? "fade-left" : undefined}
