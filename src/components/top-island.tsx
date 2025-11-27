@@ -55,9 +55,9 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     }
   }
 
-  const TabButton = ({ value, children, disabled, onClick }: { value: string, children: React.ReactNode, disabled?: boolean, onClick?: () => void }) => (
+  const TabButton = ({ value, children, disabled }: { value: string, children: React.ReactNode, disabled?: boolean }) => (
     <button
-      onClick={onClick || (() => !disabled && setActiveTab(activeTab === value ? null : value))}
+      onClick={() => !disabled && setActiveTab(activeTab === value ? null : value)}
       disabled={disabled}
       className={cn(
         "p-2.5 rounded-md transition-all duration-200 transform hover:scale-110 text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent tab-glow",
@@ -195,22 +195,22 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-4">
-      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-2 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
+      <div className="bg-card/80 backdrop-blur-lg rounded-xl border border-primary/20 p-3 flex items-center justify-between shadow-2xl shadow-primary/10 transition-all duration-300">
         <div className="flex items-center justify-start flex-1">
-          <h1 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2 pl-4 uppercase whitespace-nowrap mr-4">
-              <Feather className="w-5 h-5 text-primary" />
+          <h1 className="text-4xl font-bold tracking-tight text-foreground flex items-center gap-4 pl-4 uppercase whitespace-nowrap mr-8">
+              <Feather className="w-12 h-12 text-primary" />
               CHRONICLE AI
           </h1>
         </div>
         <div className="flex items-center gap-2">
-            <TabButton value="font"><Type className="w-5 h-5"/></TabButton>
-            <TabButton value="style"><Brush className="w-5 h-5"/></TabButton>
-            <TabButton value="humanizer"><Feather className="w-5 h-5"/></TabButton>
-            <TabButton value="language"><Languages className="w-5 h-5"/></TabButton>
-            <TabButton value="rewrite"><PencilRuler className="w-5 h-5"/></TabButton>
-            <TabButton value="references"><BookCheck className="w-5 h-5"/></TabButton>
-            <TabButton value="view-text"><History className="w-5 h-5"/></TabButton>
-            <TabButton value="download" onClick={handleExportPdf}><Download className="w-5 h-5" /></TabButton>
+            <TabButton value="font"><Type className="w-12 h-12"/></TabButton>
+            <TabButton value="style"><Brush className="w-12 h-12"/></TabButton>
+            <TabButton value="humanizer"><Feather className="w-12 h-12"/></TabButton>
+            <TabButton value="language"><Languages className="w-12 h-12"/></TabButton>
+            <TabButton value="rewrite"><PencilRuler className="w-12 h-12"/></TabButton>
+            <TabButton value="references"><BookCheck className="w-12 h-12"/></TabButton>
+            <TabButton value="view-text"><History className="w-12 h-12"/></TabButton>
+            <TabButton value="download"><Download className="w-12 h-12" /></TabButton>
         </div>
       </div>
       <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0')}>
