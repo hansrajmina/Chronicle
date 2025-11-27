@@ -11,13 +11,15 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { WritingStyleSchema } from '../schemas';
+
+export type WritingStyle = z.infer<typeof WritingStyleSchema>;
 
 const ChangeWritingStyleInputSchema = z.object({
   text: z.string().describe('The text to rewrite.'),
-  style: z.enum(['Formal', 'Casual', 'Modern']).describe('The target writing style.'),
+  style: WritingStyleSchema.describe('The target writing style.'),
 });
 export type ChangeWritingStyleInput = z.infer<typeof ChangeWritingStyleInputSchema>;
-export type WritingStyle = z.infer<typeof ChangeWritingStyleInputSchema>['style'];
 
 const ChangeWritingStyleOutputSchema = z.object({
   rewrittenText: z.string().describe('The rewritten text in the new style.'),

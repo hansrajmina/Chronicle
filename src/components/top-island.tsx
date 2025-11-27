@@ -5,8 +5,9 @@ import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Feather, Type } from 'lucide-react';
+import { Download, Feather, Type, Languages, Pen, Sparkles, BookOpen, Wand2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AiTools from './ai-tools';
 
 
 export default function TopIsland({ state, dispatch, actions }: { state: any, dispatch: any, actions: any }) {
@@ -51,6 +52,9 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
         if(value === 'download') {
             handleExportPdf();
             setActiveTab(null);
+        } else if (value === 'continue') {
+            actions.onContinue();
+            setActiveTab(null);
         } else if (!disabled) {
             setActiveTab(value === activeTab ? null : value);
         }
@@ -83,7 +87,12 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
                     </SelectContent>
                 </Select>
             </div>
-        )
+        ),
+        rewrite: <AiTools type="rewrite" state={state} actions={actions} onDone={() => setActiveTab(null)} />,
+        style: <AiTools type="style" state={state} actions={actions} onDone={() => setActiveTab(null)} />,
+        humanize: <AiTools type="humanize" state={state} actions={actions} onDone={() => setActiveTab(null)} />,
+        translate: <AiTools type="translate" state={state} actions={actions} onDone={() => setActiveTab(null)} />,
+        references: <AiTools type="references" state={state} actions={actions} onDone={() => setActiveTab(null)} />,
     };
 
     return (
@@ -104,6 +113,12 @@ export default function TopIsland({ state, dispatch, actions }: { state: any, di
         </div>
         <div className="flex items-center gap-0.5 sm:gap-2">
             <TabButton value="font"><Type className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="continue" disabled={state.wordCount === 0}><Sparkles className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="rewrite" disabled={state.selectedText.length === 0}><Pen className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="style" disabled={state.selectedText.length === 0}><Wand2 className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="humanize" disabled={state.selectedText.length === 0}><Feather className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="translate" disabled={state.selectedText.length === 0}><Languages className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
+            <TabButton value="references" disabled={state.selectedText.length === 0}><BookOpen className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
             <TabButton value="download" disabled={state.wordCount === 0}><Download className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
         </div>
       </div>
