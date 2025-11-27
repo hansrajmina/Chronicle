@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -10,9 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-
-const WritingStyleSchema = z.enum(['Formal', 'Casual', 'Modern']);
-export type WritingStyle = z.infer<typeof WritingStyleSchema>;
+import { WritingStyleSchema } from '@/ai/schemas';
 
 const ChangeWritingStyleInputSchema = z.object({
   text: z.string().describe('The text to rewrite.'),
