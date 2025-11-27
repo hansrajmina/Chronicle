@@ -137,15 +137,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             </div>
             </>
         ),
-        references: (
-            <div className="flex flex-col items-center">
-                <p className="text-sm text-muted-foreground mb-4 text-center">Fetch academic references for the entire document.</p>
-                <Button onClick={() => { actions.onFetchReferences(state.editorContent); setActiveTab(null); }} disabled={state.wordCount === 0 || state.aiLoading} className="w-full max-w-sm mx-auto transition-transform transform hover:scale-105">
-                {state.aiLoading && <Loader2 className="animate-spin mr-2" />}
-                Find References
-            </Button>
-            </div>
-        ),
         style: (
             <>
               <p className="text-sm text-muted-foreground mb-4 text-center">Change the writing style of the selected text.</p>
@@ -208,7 +199,6 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="humanizer"><Feather className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
             <TabButton value="language"><Languages className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
             <TabButton value="rewrite"><PencilRuler className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
-            <TabButton value="references"><BookCheck className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
             <TabButton value="view-text"><History className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
             <TabButton value="download"><Download className="w-8 h-8 md:w-12 md:h-12"/></TabButton>
         </div>
@@ -219,5 +209,3 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
     </div>
   )
 }
-
-    

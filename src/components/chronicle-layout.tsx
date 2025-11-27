@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { humanizeText } from '@/ai/flows/humanize-text';
 import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
 import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-language';
-import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { changeWritingStyle, type WritingStyle } from '@/ai/flows/change-writing-style';
 import { cn } from '@/lib/utils';
@@ -214,7 +213,6 @@ export default function ChronicleLayout() {
 
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
-  const onFetchReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
   const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
@@ -225,7 +223,7 @@ export default function ChronicleLayout() {
     }
   };
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onFetchReferences, onRewrite, onSetFont, onChangeStyle };
+  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
