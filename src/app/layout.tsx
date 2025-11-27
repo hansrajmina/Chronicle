@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: 'Chronicle AI',
-  description: 'An AI-assisted writing tool for the modern writer.',
+  description: 'An AI-assisted writing tool for the modern writer',
 };
 
 export default function RootLayout({
