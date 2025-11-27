@@ -50,7 +50,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                 fontClasses[font],
                 'relative'
             )}
-            style={{ minHeight: '600px' }}
+            style={{ minHeight: '800px' }}
             />
         {isEmpty && (
             <div 
@@ -64,10 +64,12 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                 <FileText className="w-4 h-4" />
                 <span>{wordCount} words</span>
             </div>
-            <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{readingTime} min read</span>
-            </div>
+            {readingTime > 0 && (
+              <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{readingTime} min read</span>
+              </div>
+            )}
         </div>
     </div>
   );
