@@ -231,30 +231,27 @@ export default function ChronicleLayout() {
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className={cn(
-            "w-full max-w-7xl mx-auto transition-all duration-500",
-            hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-2 gap-8'
+            "w-full max-w-7xl mx-auto transition-all duration-500 grid grid-cols-1 gap-8",
+            hasContent ? 'md:grid-cols-1' : 'md:grid-cols-2'
         )}>
-            <section 
-                className={cn(
-                    "flex flex-col justify-center text-left transition-all duration-500 aos-init",
-                    hasContent ? 'md:text-center md:mb-8' : ''
-                )}
-                data-aos="fade-right"
-            >
-                <h1 className={cn(
-                    "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm",
-                    hasContent ? 'text-3xl md:text-4xl' : ''
-                )}>THE FUTURE OF WRITING IS HERE</h1>
-                <p className={cn(
-                    "mt-4 text-muted-foreground",
-                    hasContent ? 'hidden' : ''
-                )}>Chronicle AI helps you write faster, smarter, and better.</p>
-            </section>
+            {!hasContent && (
+                <section
+                    className="flex flex-col justify-center text-left transition-all duration-500 aos-init"
+                    data-aos="fade-right"
+                >
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">
+                        THE FUTURE OF WRITING IS HERE
+                    </h1>
+                    <p className="mt-4 text-muted-foreground">
+                        Chronicle AI helps you write faster, smarter, and better.
+                    </p>
+                </section>
+            )}
 
             <section 
                 className={cn(
                     "w-full transition-all duration-500 aos-init relative",
-                    hasContent ? 'md:w-full' : ''
+                    hasContent ? 'md:col-span-1' : ''
                 )}
                 data-aos="fade-left" 
                 data-aos-delay="200"
@@ -293,5 +290,3 @@ export default function ChronicleLayout() {
     </div>
   );
 }
-
-    
