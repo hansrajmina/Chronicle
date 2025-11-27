@@ -4,7 +4,7 @@ import React, { useState, useReducer, useCallback, useEffect, useRef } from 'rea
 import MainEditor from '@/components/main-editor';
 import TopIsland from '@/components/top-island';
 import { Button } from '@/components/ui/button';
-import { ChevronsLeft, Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { humanizeText } from '@/ai/flows/humanize-text';
 import { expandTextWithAI } from '@/ai/flows/expand-text-with-ai';
@@ -232,10 +232,14 @@ export default function ChronicleLayout() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className={cn(
             "w-full max-w-6xl mx-auto transition-all duration-500",
-            hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-2 gap-8 items-center'
+            hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-4 gap-8 items-center'
         )}>
             <section
-                className={cn("flex flex-col justify-center text-left transition-all duration-500", hasContent && 'items-center')}
+                className={cn(
+                  "flex flex-col justify-center text-left transition-all duration-500", 
+                  hasContent && 'items-center',
+                  !hasContent && 'md:col-span-1'
+                )}
                 data-aos={!hasContent ? "fade-right" : undefined}
             >
                 <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
@@ -249,7 +253,7 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                     "w-full transition-all duration-500 relative",
-                    !hasContent && "md:col-span-1",
+                    !hasContent && "md:col-span-3",
                     hasContent && "w-full"
                 )}
                 data-aos={!hasContent ? "fade-left" : undefined}
