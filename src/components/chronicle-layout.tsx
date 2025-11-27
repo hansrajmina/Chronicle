@@ -12,7 +12,6 @@ import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-langua
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { changeWritingStyle, type WritingStyle } from '@/ai/flows/change-writing-style';
 import { cn } from '@/lib/utils';
-import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 
 declare global {
     interface Window {
@@ -217,7 +216,7 @@ export default function ChronicleLayout() {
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
-  const onGetReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
+  const onGetReferences = (text: string) => {};
   const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
