@@ -58,6 +58,15 @@ const initialState: AppState = {
   hasContent: false,
 };
 
+const checkIsEmpty = (htmlContent: string) => {
+    if (!htmlContent) return true;
+    const strippedContent = htmlContent.replace(/<[^>]*>/g, '').trim();
+    if (strippedContent.length > 0) return false;
+    
+    // Check for common empty states from contentEditable
+    return htmlContent === '<p><br></p>' || htmlContent === '<p></p>' || htmlContent === '<div><br></div>' || htmlContent === '<div></div>' || htmlContent === '<br>';
+};
+
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_EDITOR_CONTENT':
@@ -75,9 +84,10 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true, hasContent: true };
     case 'SET_REPHRASED_CONTENT':
         const rephrasedContent = action.payload;
+        const rephrasedIsNotEmpty = !checkIsEmpty(rephrasedContent);
         const rephrasedWordCount = rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
         const rephrasedReadingTime = Math.ceil(rephrasedWordCount / 200);
-        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent: rephrasedWordCount > 0 };
+        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent: rephrasedIsNotEmpty };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -234,7 +244,7 @@ export default function ChronicleLayout() {
             "w-full max-w-6xl mx-auto transition-all duration-500",
             state.hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-5 gap-8 items-center'
         )}>
-            <section
+             <section
                 className={cn(
                   "flex flex-col justify-center text-left transition-all duration-500", 
                   state.hasContent && 'items-center',
@@ -245,7 +255,7 @@ export default function ChronicleLayout() {
                 <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", state.hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
                     THE FUTURE OF WRITING IS HERE
                 </h1>
-                <p className={cn("mt-1 text-muted-foreground", state.hasContent ? "text-center mb-8" : "")}>
+                <p className={cn("text-muted-foreground", state.hasContent ? "text-center mb-8" : "mt-1")}>
                     Chronicle AI helps you write faster, smarter, and better.
                 </p>
             </section>
