@@ -50,7 +50,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                 fontClasses[font],
                 'relative'
             )}
-            style={{ minHeight: '450px' }}
+            style={{ minHeight: '300px' }}
             />
         {isEmpty && (
             <div 
@@ -78,5 +78,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
 MainEditor.displayName = "MainEditor";
 
 export default MainEditor;
+
+    
 
     
