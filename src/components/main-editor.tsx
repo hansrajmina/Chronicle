@@ -7,7 +7,7 @@ import { Clock, FileText } from 'lucide-react';
 interface MainEditorProps {
   content: string;
   font: 'inter' | 'lora' | 'mono';
-  onContentChange: (content: string) => void;
+  onContentChange: (content: string, hasContent: boolean) => void;
   onSelectionChange: () => void;
 }
 
@@ -25,17 +25,29 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
   const wordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
   const readingTime = Math.ceil(wordCount / 200);
 
+  const checkIsEmpty = (htmlContent: string) => {
+    if (!htmlContent) return true;
+    const strippedContent = htmlContent.replace(/<[^>]*>/g, '').trim();
+    if (strippedContent.length > 0) return false;
+    
+    // Check for common empty states from contentEditable
+    return htmlContent === '<p><br></p>' || htmlContent === '<p></p>' || htmlContent === '<div><br></div>' || htmlContent === '<div></div>' || htmlContent === '<br>';
+  };
+  
+  const isEmpty = checkIsEmpty(content);
+
   useEffect(() => {
-    if (internalRef.current && internalRef.current.querySelector('#editor-content')!.innerHTML !== content) {
-      internalRef.current.querySelector('#editor-content')!.innerHTML = content;
+    const editorNode = internalRef.current?.querySelector('#editor-content');
+    if (editorNode && editorNode.innerHTML !== content) {
+        editorNode.innerHTML = content;
     }
   }, [content, internalRef]);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    onContentChange(e.currentTarget.innerHTML);
+    const currentContent = e.currentTarget.innerHTML;
+    onContentChange(currentContent, !checkIsEmpty(currentContent));
   };
   
-  const isEmpty = !content || content === '<p><br></p>' || content === '';
 
   return (
     <div className='relative' id="editor" ref={internalRef}>
@@ -78,8 +90,4 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
 MainEditor.displayName = "MainEditor";
 
 export default MainEditor;
-
     
-
-    
-

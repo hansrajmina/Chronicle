@@ -31,10 +31,11 @@ type AppState = {
   aiResult: string;
   font: 'inter' | 'lora' | 'mono';
   isTextExpanded: boolean;
+  hasContent: boolean;
 };
 
 type AppAction =
-  | { type: 'SET_EDITOR_CONTENT'; payload: string }
+  | { type: 'SET_EDITOR_CONTENT'; payload: { content: string, hasContent: boolean } }
   | { type: 'SET_REPHRASED_CONTENT'; payload: string }
   | { type: 'SET_SELECTED_TEXT'; payload: string }
   | { type: 'SET_WORD_GOAL'; payload: number }
@@ -54,15 +55,16 @@ const initialState: AppState = {
   aiResult: '',
   font: 'inter',
   isTextExpanded: false,
+  hasContent: false,
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'SET_EDITOR_CONTENT':
-      const content = action.payload;
+      const { content, hasContent } = action.payload;
       const newWordCount = content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
       const readingTime = Math.ceil(newWordCount / 200);
-      return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false };
+      return { ...state, editorContent: content, wordCount: newWordCount, readingTime, isTextExpanded: false, hasContent };
     case 'APPEND_EDITOR_CONTENT':
         const lastChar = state.editorContent.replace(/<[^>]*>/g, '').slice(-1);
         const separator = (lastChar === '' || lastChar === ' ' || lastChar === '.' || lastChar === ',') ? '' : ' ';
@@ -70,12 +72,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         const appendedContent = state.editorContent + separator + animatedText;
         const appendedWordCount = appendedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
         const appendedReadingTime = Math.ceil(appendedWordCount / 200);
-        return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true };
+        return { ...state, editorContent: appendedContent, wordCount: appendedWordCount, readingTime: appendedReadingTime, isTextExpanded: true, hasContent: true };
     case 'SET_REPHRASED_CONTENT':
         const rephrasedContent = action.payload;
         const rephrasedWordCount = rephrasedContent.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
         const rephrasedReadingTime = Math.ceil(rephrasedWordCount / 200);
-        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false };
+        return { ...state, editorContent: rephrasedContent, wordCount: rephrasedWordCount, readingTime: rephrasedReadingTime, isTextExpanded: false, hasContent: rephrasedWordCount > 0 };
     case 'SET_SELECTED_TEXT':
       return { ...state, selectedText: action.payload };
     case 'SET_WORD_GOAL':
@@ -101,8 +103,6 @@ export default function ChronicleLayout() {
   const [activeTabState, setActiveTabState] = useState<string | null>(null);
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
-  
-  const hasContent = state.wordCount > 0;
 
   setActiveTab = (tab) => {
     if (activeTabState === tab) {
@@ -152,8 +152,8 @@ export default function ChronicleLayout() {
     };
   }, [state.aiLoading, state.wordCount, state.isTextExpanded, onContinueWriting, onRephrase]);
   
-  const handleContentChange = useCallback((content: string) => {
-    dispatch({ type: 'SET_EDITOR_CONTENT', payload: content });
+  const handleContentChange = useCallback((content: string, hasContent: boolean) => {
+    dispatch({ type: 'SET_EDITOR_CONTENT', payload: { content, hasContent } });
   }, []);
 
   const handleSelectionChange = useCallback(() => {
@@ -232,20 +232,20 @@ export default function ChronicleLayout() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className={cn(
             "w-full max-w-6xl mx-auto transition-all duration-500",
-            hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-5 gap-8 items-center'
+            state.hasContent ? 'flex flex-col items-center' : 'grid grid-cols-1 md:grid-cols-5 gap-8 items-center'
         )}>
             <section
                 className={cn(
                   "flex flex-col justify-center text-left transition-all duration-500", 
-                  hasContent && 'items-center',
-                  !hasContent && 'md:col-span-2'
+                  state.hasContent && 'items-center',
+                  !state.hasContent && 'md:col-span-2'
                 )}
-                data-aos={!hasContent ? "fade-right" : undefined}
+                data-aos={!state.hasContent ? "fade-right" : undefined}
             >
-                <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
+                <h1 className={cn("font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm", state.hasContent ? "text-3xl md:text-4xl text-center mb-2" : "text-4xl md:text-5xl lg:text-6xl")}>
                     THE FUTURE OF WRITING IS HERE
                 </h1>
-                <p className={cn("mt-1 text-muted-foreground", hasContent ? "text-center mb-8" : "")}>
+                <p className={cn("mt-1 text-muted-foreground", state.hasContent ? "text-center mb-8" : "")}>
                     Chronicle AI helps you write faster, smarter, and better.
                 </p>
             </section>
@@ -253,10 +253,10 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                     "w-full transition-all duration-500 relative",
-                    !hasContent && "md:col-span-3",
-                    hasContent && "w-full"
+                    !state.hasContent && "md:col-span-3",
+                    state.hasContent && "w-full"
                 )}
-                data-aos={!hasContent ? "fade-left" : undefined}
+                data-aos={!state.hasContent ? "fade-left" : undefined}
                 data-aos-delay="200"
                 onClick={handleEditorClick}
             >
@@ -274,7 +274,7 @@ export default function ChronicleLayout() {
                     />
                   </div>
                 </div>
-                {hasContent && (
+                {state.hasContent && (
                     <div className="absolute bottom-[-20px] right-4">
                       <Button 
                         onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
