@@ -192,8 +192,8 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
                   <DropdownMenuItem 
                     key={style}
                     onClick={() => {
-                      setActiveTab('style');
-                      actions.onChangeStyle(state.selectedText, style as WritingStyle);
+                        setActiveTab('style');
+                        actions.onChangeStyle(state.selectedText, style as WritingStyle);
                     }}
                   >
                     {style}
