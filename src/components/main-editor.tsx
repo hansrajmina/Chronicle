@@ -97,7 +97,7 @@ const MainEditor = forwardRef<HTMLDivElement, MainEditorProps>(
                     onClick={actions.onExpandText} 
                     disabled={state.isAiLoading}
                     size="sm"
-                    className="rounded-full shadow-lg shadow-primary/20 tab-glow"
+                    className="rounded-full shadow-lg shadow-primary/20 tab-glow gap-2"
                 >
                     {state.isAiLoading ? (
                         <Loader className="w-4 h-4 animate-spin" />
