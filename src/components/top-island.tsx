@@ -204,11 +204,9 @@ export default function TopIsland({ state, dispatch, actions, activeTab, setActi
             <TabButton value="download" disabled={state.wordCount === 0}><Download className="w-4 h-4 sm:w-5 md:w-6"/></TabButton>
         </div>
       </div>
-      <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab && activeTab !== 'style' ? 'max-h-96' : 'max-h-0', activeTab === 'style' && 'max-h-96' )}>
+      <div className={cn("transition-all duration-300 ease-in-out overflow-hidden", activeTab ? 'max-h-96' : 'max-h-0' )}>
         {renderTabContent()}
       </div>
     </div>
   )
 }
-
-    
