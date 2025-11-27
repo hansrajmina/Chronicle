@@ -108,7 +108,13 @@ export default function ChronicleLayout() {
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
 
-  setActiveTab = setActiveTabState;
+  setActiveTab = (tab) => {
+    if (activeTabState === tab) {
+      setActiveTabState(null);
+    } else {
+      setActiveTabState(tab);
+    }
+  };
 
 
   useEffect(() => {
@@ -206,7 +212,7 @@ export default function ChronicleLayout() {
         dispatch={dispatch}
         actions={actions}
         activeTab={activeTabState}
-        setActiveTab={setActiveTabState}
+        setActiveTab={setActiveTab}
       />
       
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-20">
@@ -250,3 +256,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
