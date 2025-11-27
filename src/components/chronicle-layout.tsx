@@ -107,6 +107,8 @@ export default function ChronicleLayout() {
   const [activeTabState, setActiveTabState] = useState<string | null>(null);
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
+  
+  const hasContent = state.wordCount > 0;
 
   setActiveTab = (tab) => {
     if (activeTabState === tab) {
@@ -238,10 +240,13 @@ export default function ChronicleLayout() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 mt-24 sm:mt-28 md:mt-32">
         <div className="w-full flex items-center justify-center gap-8 md:flex-row flex-col">
             <section 
-                className="text-center md:text-left transition-opacity duration-500 md:w-2/5 aos-init"
+                className={cn(
+                  "text-center md:text-left transition-all duration-500 aos-init",
+                  hasContent ? "md:w-1/4" : "md:w-2/5"
+                )}
                 data-aos="fade-right"
             >
-                <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-br from-foreground to-muted-foreground/50 drop-shadow-sm">THE FUTURE OF WRITING IS HERE</h1>
                 <p className="mt-4 text-xs text-muted-foreground">Chronicle AI helps you write faster, smarter, and better.</p>
                 <Button 
                     onClick={state.isTextExpanded ? onRephrase : onContinueWriting} 
@@ -255,7 +260,10 @@ export default function ChronicleLayout() {
             </section>
 
             <section 
-                className="w-full transition-all duration-500 md:w-3/5 aos-init"
+                className={cn(
+                  "w-full transition-all duration-500 aos-init",
+                  hasContent ? "md:w-3/4" : "md:w-3/5"
+                )}
                 data-aos="fade-left" 
                 data-aos-delay="200"
                 onClick={handleEditorClick}
@@ -281,3 +289,5 @@ export default function ChronicleLayout() {
     </div>
   );
 }
+
+    
