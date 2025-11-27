@@ -12,6 +12,7 @@ import { translateToIndianLanguage } from '@/ai/flows/translate-to-indian-langua
 import { rewriteTextToLength } from '@/ai/flows/rewrite-text-to-length';
 import { changeWritingStyle, type WritingStyle } from '@/ai/flows/change-writing-style';
 import { cn } from '@/lib/utils';
+import { fetchAcademicReferences } from '@/ai/flows/fetch-academic-references';
 
 declare global {
     interface Window {
@@ -216,6 +217,7 @@ export default function ChronicleLayout() {
   const onHumanize = (text: string) => handleApiCall(humanizeText, { text }, 'Text humanized.');
   const onTranslate = (text: string, language: IndianLanguage) => handleApiCall(translateToIndianLanguage, { text, language }, 'Text translated.');
   const onRewrite = (text: string, length: number) => handleApiCall(rewriteTextToLength, { text, length }, 'Text rewritten.');
+  const onGetReferences = (text: string) => handleApiCall(fetchAcademicReferences, { text }, 'References fetched.');
   const onChangeStyle = (text: string, style: WritingStyle) => handleApiCall(changeWritingStyle, { text, style }, 'Style changed.');
   const onSetFont = (font: 'inter' | 'lora' | 'mono') => dispatch({ type: 'SET_FONT', payload: font });
 
@@ -225,7 +227,7 @@ export default function ChronicleLayout() {
     }
   };
 
-  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle };
+  const actions = { onContinueWriting, onHumanize, onTranslate, onRewrite, onSetFont, onChangeStyle, onGetReferences };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground feather-cursor">
@@ -242,7 +244,7 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                   "text-center md:text-left transition-all duration-500 aos-init",
-                  hasContent ? "md:w-1/4" : "md:w-2/5"
+                  hasContent ? "md:w-1/5" : "md:w-2/5"
                 )}
                 data-aos="fade-right"
             >
@@ -262,7 +264,7 @@ export default function ChronicleLayout() {
             <section 
                 className={cn(
                   "w-full transition-all duration-500 aos-init",
-                  hasContent ? "md:w-3/4" : "md:w-3/5"
+                  hasContent ? "md:w-4/5" : "md:w-3/5"
                 )}
                 data-aos="fade-left" 
                 data-aos-delay="200"
@@ -289,5 +291,3 @@ export default function ChronicleLayout() {
     </div>
   );
 }
-
-    
